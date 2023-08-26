@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../services/bluetooth.dart';
 import '../utilities/constants/colors.dart';
@@ -157,15 +156,26 @@ class _MotorScreenState extends State<MotorScreen> {
                               double percentageDifference =
                                   ((rpmCurrent - rpmTarget).abs() / rpmTarget) *
                                       100;
-                              if (percentageDifference >= 5 &&
-                                  percentageDifference < 10) {
+
+                              if (percentageDifference >= 3 &&
+                                  percentageDifference < 5) {
                                 error = 0;
-                              } else if (percentageDifference >= 10 &&
-                                  percentageDifference < 15) {
+                              } else if (percentageDifference >= 5 &&
+                                  percentageDifference < 8) {
                                 error = 1;
-                              } else if (percentageDifference >= 15) {
+                              } else if (percentageDifference >= 8) {
                                 error = 2;
                               }
+
+                              // if (percentageDifference >= 5 &&
+                              //     percentageDifference < 10) {
+                              //   error = 0;
+                              // } else if (percentageDifference >= 10 &&
+                              //     percentageDifference < 15) {
+                              //   error = 1;
+                              // } else if (percentageDifference >= 15) {
+                              //   error = 2;
+                              // }
                             }
                             // else if (percentageDifference >= 20) {
                             //   error = 3;

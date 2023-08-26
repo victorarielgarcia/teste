@@ -1,6 +1,8 @@
-import 'package:easytech_electric_blue/utilities/constants/colors.dart';
-import 'package:easytech_electric_blue/utilities/global.dart';
+
 import 'package:flutter/material.dart';
+
+import '../utilities/constants/colors.dart';
+import '../utilities/global.dart';
 
 class LiftSensor {
   int getSelectableOption() {
@@ -45,7 +47,7 @@ class LiftSensorManager extends ChangeNotifier {
       speed = nmea['speed'];
     } else if (velocity['options'] == 3) {
      
-      speed = velocity['speed'];
+      speed = velocity['speed'].toDouble();
     }
 
     if (speed > 0 && machineLifted) {

@@ -34,8 +34,12 @@ class _MachineLayoutScreenState extends State<MachineLayoutScreen> {
   }
 
   void checkLayout() {
-    if (!checkMaxNumberOfLines(brachiaria["layout"]) ||
-        !checkMaxNumberOfLines(fertilizer["layout"])) {
+    if ((machine['brachiaria']
+            ? !checkMaxNumberOfLines(brachiaria["layout"])
+            : false) ||
+        (machine['fertilizer']
+            ? !checkMaxNumberOfLines(fertilizer["layout"])
+            : false)) {
       setState(() {
         disableNavigation = true;
       });
@@ -69,7 +73,7 @@ class _MachineLayoutScreenState extends State<MachineLayoutScreen> {
           disableNavigation
               ? GestureDetector(
                   onTap: () {
-                    machineLayoutDialog(context);
+                    machineLayoutDialog();
                   },
                   child: Container(
                     width: double.infinity,
@@ -108,7 +112,7 @@ class _MachineLayoutScreenState extends State<MachineLayoutScreen> {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               MachineScreen.route, (route) => false);
                         } else {
-                          machineLayoutDialog(context);
+                          machineLayoutDialog();
                         }
                       },
                     ),

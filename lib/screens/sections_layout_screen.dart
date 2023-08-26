@@ -67,7 +67,7 @@ class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
           disableNavigation
               ? GestureDetector(
                   onTap: () {
-                    machineLayoutDialog(context);
+                    machineLayoutDialog();
                   },
                   child: Container(
                     width: double.infinity,
@@ -106,7 +106,7 @@ class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               MachineScreen.route, (route) => false);
                         } else {
-                          machineLayoutDialog(context);
+                          machineLayoutDialog();
                         }
                       },
                     ),

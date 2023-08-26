@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import '../models/lift_sensor_model.dart';
 import '../screens/machine_screen.dart';
 import '../utilities/constants/colors.dart';
 import '../utilities/global.dart';
@@ -46,6 +46,9 @@ class _BooleanCardState extends State<BooleanCard> {
         break;
       case 4:
         tempValue = liftSensor['manualMachineLifted'];
+        break;
+      case 5:
+        tempValue = seedDropControl['enabled'];
         break;
     }
     setState(() {
@@ -128,15 +131,26 @@ class _BooleanCardState extends State<BooleanCard> {
                               setState(() {
                                 liftSensor['normallyOpen'] = variable;
                               });
-                              Messages().message["brachiaria"]!();
+                              liftSensor['manualMachineLifted'] = false;
+                              Messages().message["sensor"]!(
+                                  LiftSensor().getSelectableOption());
+
                               break;
                             case 4:
                               setState(() {
                                 liftSensor['manualMachineLifted'] = variable;
                               });
+                              liftSensor['normallyOpen'] = false;
                               liftSensorManager
                                   .update(!liftSensor['manualMachineLifted']);
-                              // Messages().message["sensor"]!();
+                              Messages().message["sensor"]!(
+                                  LiftSensor().getSelectableOption());
+                              break;
+                            case 5:
+                              setState(() {
+                                seedDropControl['enabled'] = variable;
+                              });
+                              seedDropManager.update(variable ? 0 : -1);
                               break;
                           }
                         },

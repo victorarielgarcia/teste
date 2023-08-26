@@ -1,13 +1,12 @@
-
+import 'package:easytech_electric_blue/utilities/constants/sizes.dart';
+import 'package:easytech_electric_blue/widgets/boolean_card.dart';
 import 'package:flutter/material.dart';
 import '../models/lift_sensor_model.dart';
 import '../services/bluetooth.dart';
 import '../services/logger.dart';
 import '../utilities/constants/colors.dart';
-import '../utilities/constants/sizes.dart';
 import '../utilities/global.dart';
 import '../utilities/messages.dart';
-import '../widgets/boolean_card.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/top_bar.dart';
 

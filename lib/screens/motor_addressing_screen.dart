@@ -11,7 +11,6 @@ import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/button.dart';
 import '../widgets/card.dart';
 import '../widgets/dialogs/machine_layout_dialog.dart';
-import '../widgets/dialogs/module_addressing_dialog.dart';
 import '../widgets/top_bar.dart';
 import 'advanced_screen.dart';
 
@@ -101,16 +100,7 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
     }
 
     motorAddressingManager.addListener(motorAddressingListener);
-    timer ??= Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (isAddressing) {
-        Messages().message["moduleAddressing"]!(motorID);
-        timerCount++;
-      }
-      if (timerCount == 360) {
-        cancelAddressing();
-        moduleAddresingDialog(context);
-      }
-    });
+
     super.initState();
   }
 
@@ -136,7 +126,7 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
           disableNavigation
               ? GestureDetector(
                   onTap: () {
-                    machineLayoutDialog(context);
+                    machineLayoutDialog();
                   },
                   child: Container(
                     width: double.infinity,
@@ -176,7 +166,7 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               AdvancedScreen.route, (route) => false);
                         } else {
-                          machineLayoutDialog(context);
+                          machineLayoutDialog();
                         }
                       },
                     ),
@@ -309,16 +299,12 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                                 -1 &&
                                                             noMotorAddressing) {
                                                           int numberMotor = 0;
-                                                          brachiaria[
-                                                                  'addressedLayout']
-                                                              .forEach((k, v) {
-                                                            if (v ==
-                                                                index + 1) {
-                                                              numberMotor =
-                                                                  int.parse(k);
-                                                            }
-                                                          });
-
+                                                          numberMotor = numberMotor =
+                                                              int.parse(brachiaria[
+                                                                          'addressedLayout']
+                                                                      [index]
+                                                                  .toString());
+                                                                  
                                                           Messages().message[
                                                                   "motorAddressing"]!(
                                                               numberMotor);
@@ -483,14 +469,11 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                               -1 &&
                                                           noMotorAddressing) {
                                                         int numberMotor = 0;
-                                                        fertilizer[
-                                                                'addressedLayout']
-                                                            .forEach((k, v) {
-                                                          if (v == index + 1) {
-                                                            numberMotor =
-                                                                int.parse(k);
-                                                          }
-                                                        });
+                                                        numberMotor = numberMotor =
+                                                            int.parse(fertilizer[
+                                                                        'addressedLayout']
+                                                                    [index]
+                                                                .toString());
 
                                                         Messages().message[
                                                                 "motorAddressing"]!(
@@ -627,13 +610,23 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                         -1 &&
                                                     noMotorAddressing) {
                                                   int numberMotor = 0;
-                                                  seed['addressedLayout']
-                                                      .forEach((k, v) {
-                                                    if (v == index + 1) {
-                                                      numberMotor =
-                                                          int.parse(k);
-                                                    }
-                                                  });
+
+                                                  // seed['addressedLayout']
+                                                  //     .forEach((k, v) {
+                                                  //   if (v == index + 1) {
+                                                  //     numberMotor =
+                                                  //         int.parse(k);
+                                                  //   }
+                                                  // });
+
+                                                  numberMotor = numberMotor =
+                                                      int.parse(
+                                                          seed['addressedLayout']
+                                                                  [index]
+                                                              .toString());
+
+                                                  // print(
+                                                  //     "NUMER GO DO MOTOR: ${numberMotor}");
 
                                                   Messages().message[
                                                           "motorAddressing"]!(

@@ -6,6 +6,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../utilities/global.dart';
 import '../utilities/messages.dart';
 import '../utilities/nmea.dart';
+import 'log_saver.dart';
 import 'logger.dart';
 
 // Bluetooth
@@ -101,16 +102,19 @@ class Bluetooth {
       sendWithQueue = true;
       //  connection = await BluetoothConnection.toAddress('A8:42:E3:89:9F:62');
       connection = await BluetoothConnection.toAddress(bluetooth['address']);
-      AppLogger.log("Conectado!");
+      AppLogger.log("Bluetooth Connected!");
       connected = true;
       bluetoothManager.changeConnectionState(connected);
-      // Messages().message['requestSettings']!();
-      // Messages().sendSettingsRequest();
+
+      Messages().sendSettingsRequest();
       sendWithQueue = false;
       startRead(connection!.input!.cast<List<int>>());
     } catch (e) {
       AppLogger.error("ERROR CONNECTION BLUETOOTH: $e");
-      // connect();
+      Timer(const Duration(seconds: 8), () {
+        connect();
+      });
+
       connected = false;
     }
   }
@@ -238,9 +242,10 @@ class Bluetooth {
     getMotorsRPM(id, message);
     // Mensagem leitura RPM
     getModuleVersion(id, message);
-
     //Mensagem motores endereçados
     getAddressedMotors(id, message);
+    //Busca a porcentagem de calibração
+    getCalibrationPorcetage(id, message);
     // Mensagem velocidade e sensor de levante
     getAntennaSpeedAndLiftSensor(id, message);
     // Mensagem com informações NMEA
@@ -420,10 +425,14 @@ class Bluetooth {
           speed = velocity['speed'].toDouble();
         }
 
-        motor['targetRPMSeed'] =
-            ((seed['desiredRate'] / seed['numberOfHoles']) *
-                (speed / 3.6) *
-                60);
+        if (machine['diskFilling']) {
+          motor['targetRPMSeed'] = 10.0;
+        } else {
+          motor['targetRPMSeed'] =
+              ((seed['desiredRate'] / seed['numberOfHoles']) *
+                  (speed / 3.6) *
+                  60);
+        }
 
         motor['targetRPMFertilizer'] = (((fertilizer['desiredRate'] /
                         (10000 / machine['spacing']) /
@@ -447,6 +456,7 @@ class Bluetooth {
           motor['targetRPMFertilizer'],
           motor['targetRPMSeed'],
         );
+        LogSaver.generateLog();
       }
     } catch (e) {
       AppLogger.error("GET MOTORS RPM ERROR: $e");
@@ -517,19 +527,28 @@ class Bluetooth {
     }
   }
 
+  getCalibrationPorcetage(id, message) {
+    try {
+      if (id == 15) {
+        calibrationManager.update(message[4]);
+      }
+    } catch (e) {
+      AppLogger.error("GET CALIBRATION PORCENTAGE ERROR: $e");
+    }
+  }
+
   getAntennaSpeedAndLiftSensor(id, message) {
     try {
       if (id == 16) {
         double speed = ((message[5] * 256 + message[6]) / 100).toDouble();
         antennaManager.updateSpeed(speed);
         if (!liftSensor['manualMachineLifted']) {
-          if (message[4] == 1 && !liftSensor['machineLifted']) {
+          if (message[4] == 1) {
             liftSensor['machineLifted'] = true;
-            liftSensorManager.update(liftSensor['machineLifted']);
-          } else if (message[4] == 0 && liftSensor['machineLifted']) {
+          } else {
             liftSensor['machineLifted'] = false;
-            liftSensorManager.update(liftSensor['machineLifted']);
           }
+          liftSensorManager.update(liftSensor['machineLifted']);
         }
       }
     } catch (e) {

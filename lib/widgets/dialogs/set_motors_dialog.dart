@@ -7,7 +7,7 @@ import '../../utilities/messages.dart';
 import '../alert_box.dart';
 import '../card.dart';
 
-setMotorsDialog(BuildContext context) {
+setMotorsDialog() {
   JMAlertBox(
           title: 'Configurar motores',
           onPressed: () {},
@@ -16,8 +16,9 @@ setMotorsDialog(BuildContext context) {
           width: 1200,
           ok: false,
           cancel: true,
+          offsetPosition: 120,
           body: const SetMotorsDialog())
-      .openJMAlertBox(context);
+      .openJMAlertBox(navigatorKey.currentContext);
 }
 
 class SetMotorsDialog extends StatefulWidget {

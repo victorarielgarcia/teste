@@ -2,6 +2,9 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:easytech_electric_blue/screens/module_addressing_screen.dart';
 import 'package:easytech_electric_blue/screens/motor_addressing_screen.dart';
 import 'package:easytech_electric_blue/utilities/constants/sizes.dart';
+import 'package:easytech_electric_blue/widgets/boolean_card.dart';
+import 'package:easytech_electric_blue/widgets/config_card.dart';
+import 'package:easytech_electric_blue/widgets/toogle_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../services/bluetooth.dart';
@@ -23,16 +26,32 @@ class AdvancedScreen extends StatefulWidget {
 }
 
 class _AdvancedScreenState extends State<AdvancedScreen> {
+  final seedDropState = seedDropManager.state;
+  void seedDropListener() {
+    if (mounted) {
+      setState(() {
+        seedDropState;
+      });
+    }
+  }
+
   @override
   void initState() {
     if (connected) {
       Bluetooth().currentScreen(context, 20);
     }
+    seedDropManager.addListener(seedDropListener);
     _init();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   advancedDialog(context);
     // });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    seedDropManager.removeListener(seedDropListener);
+    super.dispose();
   }
 
   bool isLoadingDevices = false;
@@ -74,171 +93,6 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                     fontWeight: FontWeight.w300),
               ),
               const SizedBox(height: kDefaultPadding),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Row(
-              //       children: [
-              //         Padding(
-              //           padding:
-              //               const EdgeInsets.only(top: kDefaultPadding / 2),
-              //           child: Container(
-              //             width: 320,
-              //             height: 200,
-              //             decoration: BoxDecoration(
-              //               color: Colors.white,
-              //               border: Border.all(color: kStrokeColor),
-              //               borderRadius:
-              //                   BorderRadius.circular(kDefaultBorderSize),
-              //             ),
-              //             child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.center,
-              //                 children: [
-              //                   const Padding(
-              //                     padding: EdgeInsets.symmetric(
-              //                         vertical: kDefaultPadding / 2),
-              //                     child: Text(
-              //                       'Semente',
-              //                       style: TextStyle(
-              //                           color: kPrimaryColor,
-              //                           fontWeight: FontWeight.w300,
-              //                           fontSize: 18),
-              //                     ),
-              //                   ),
-              //                   Padding(
-              //                     padding: const EdgeInsets.only(
-              //                         top: kDefaultPadding / 4),
-              //                     child: Column(
-              //                       mainAxisAlignment: MainAxisAlignment.center,
-              //                       children: const [
-              //                         ToogleButton(
-              //                           id: 1,
-              //                           firstText: '50',
-              //                           secoundText: '100',
-              //                         ),
-              //                         SizedBox(height: kDefaultPadding / 2),
-              //                         ToogleButton(
-              //                           id: 2,
-              //                           icon: true,
-              //                           rotate: true,
-              //                           firstIcon: Icons.refresh,
-              //                           secoundIcon: Icons.refresh,
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //                 ]),
-              //           ),
-              //         ),
-              //         const SizedBox(width: kDefaultPadding / 2),
-              //         Padding(
-              //           padding:
-              //               const EdgeInsets.only(top: kDefaultPadding / 2),
-              //           child: Container(
-              //             width: 320,
-              //             height: 200,
-              //             decoration: BoxDecoration(
-              //               color: Colors.white,
-              //               border: Border.all(color: kStrokeColor),
-              //               borderRadius:
-              //                   BorderRadius.circular(kDefaultBorderSize),
-              //             ),
-              //             child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.center,
-              //                 children: [
-              //                   const Padding(
-              //                     padding: EdgeInsets.symmetric(
-              //                         vertical: kDefaultPadding / 2),
-              //                     child: Text(
-              //                       'Adubo',
-              //                       style: TextStyle(
-              //                           color: kPrimaryColor,
-              //                           fontWeight: FontWeight.w300,
-              //                           fontSize: 18),
-              //                     ),
-              //                   ),
-              //                   Padding(
-              //                     padding: const EdgeInsets.only(
-              //                         top: kDefaultPadding / 4),
-              //                     child: Column(
-              //                       mainAxisAlignment: MainAxisAlignment.center,
-              //                       children: const [
-              //                         ToogleButton(
-              //                           id: 3,
-              //                           firstText: '50',
-              //                           secoundText: '100',
-              //                         ),
-              //                         SizedBox(height: kDefaultPadding / 2),
-              //                         ToogleButton(
-              //                           id: 4,
-              //                           icon: true,
-              //                           rotate: true,
-              //                           firstIcon: Icons.refresh,
-              //                           secoundIcon: Icons.refresh,
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //                 ]),
-              //           ),
-              //         ),
-              //         const SizedBox(width: kDefaultPadding / 2),
-              //         Padding(
-              //           padding:
-              //               const EdgeInsets.only(top: kDefaultPadding / 2),
-              //           child: Container(
-              //             width: 320,
-              //             height: 200,
-              //             decoration: BoxDecoration(
-              //               color: Colors.white,
-              //               border: Border.all(color: kStrokeColor),
-              //               borderRadius:
-              //                   BorderRadius.circular(kDefaultBorderSize),
-              //             ),
-              //             child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.center,
-              //                 children: [
-              //                   const Padding(
-              //                     padding: EdgeInsets.symmetric(
-              //                         vertical: kDefaultPadding / 2),
-              //                     child: Text(
-              //                       'Braquiária',
-              //                       style: TextStyle(
-              //                           color: kPrimaryColor,
-              //                           fontWeight: FontWeight.w300,
-              //                           fontSize: 18),
-              //                     ),
-              //                   ),
-              //                   Padding(
-              //                     padding: const EdgeInsets.only(
-              //                         top: kDefaultPadding / 4),
-              //                     child: Column(
-              //                       mainAxisAlignment: MainAxisAlignment.center,
-              //                       children: const [
-              //                         ToogleButton(
-              //                           id: 5,
-              //                           firstText: '50',
-              //                           secoundText: '100',
-              //                         ),
-              //                         SizedBox(height: kDefaultPadding / 2),
-              //                         ToogleButton(
-              //                           id: 6,
-              //                           icon: true,
-              //                           rotate: true,
-              //                           firstIcon: Icons.refresh,
-              //                           secoundIcon: Icons.refresh,
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //                 ]),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-
               Column(
                 children: [
                   Text(
@@ -250,56 +104,210 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: kDefaultPadding * 2),
-              Column(
+              const SizedBox(height: kDefaultPadding),
+              const Text(
+                "Bluetooth",
+                style: TextStyle(
+                    fontSize: 22,
+                    color: kPrimaryColor,
+                    fontWeight: FontWeight.w300),
+              ),
+              const SizedBox(height: kDefaultPadding / 2),
+              isLoadingDevices
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DropdownButton(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          items: Bluetooth().getDeviceItems(),
+                          onChanged: (value) => setState(() => device = value!),
+                          value: device,
+                        ),
+                        const SizedBox(width: kDefaultPadding),
+                        JMButton(
+                          text: "Conectar",
+                          onPressed: () async {
+                            bluetooth['address'] = device.address;
+                          },
+                        ),
+                        const SizedBox(width: kDefaultPadding),
+                        JMButton(
+                            text: '',
+                            icon: const Icon(Icons.bluetooth),
+                            onPressed: () {
+                              const AndroidIntent(
+                                action: 'android.settings.BLUETOOTH_SETTINGS',
+                              ).launch();
+                            }),
+                      ],
+                    ),
+              const SizedBox(height: kDefaultPadding / 2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Bluetooth",
-                        style: TextStyle(
-                            fontSize: 22,
-                            color: kPrimaryColor,
-                            fontWeight: FontWeight.w300),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: kDefaultPadding / 2),
+                        child: Container(
+                          width: 320,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: kStrokeColor),
+                            borderRadius:
+                                BorderRadius.circular(kDefaultBorderSize),
+                          ),
+                          child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: kDefaultPadding / 2),
+                                  child: Text(
+                                    'Semente',
+                                    style: TextStyle(
+                                        color: kPrimaryColor,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: kDefaultPadding / 4),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ToogleButton(
+                                        id: 1,
+                                        firstText: '50',
+                                        secoundText: '100',
+                                      ),
+                                      SizedBox(height: kDefaultPadding / 2),
+                                      ToogleButton(
+                                        id: 2,
+                                        icon: true,
+                                        rotate: true,
+                                        firstIcon: Icons.refresh,
+                                        secoundIcon: Icons.refresh,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                        ),
                       ),
-                      const SizedBox(width: kDefaultPadding),
-                      JMButton(
-                          text: '',
-                          icon: const Icon(Icons.bluetooth),
-                          onPressed: () {
-                            const AndroidIntent(
-                              action: 'android.settings.BLUETOOTH_SETTINGS',
-                            ).launch();
-                          }),
+                      const SizedBox(width: kDefaultPadding / 2),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: kDefaultPadding / 2),
+                        child: Container(
+                          width: 320,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: kStrokeColor),
+                            borderRadius:
+                                BorderRadius.circular(kDefaultBorderSize),
+                          ),
+                          child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: kDefaultPadding / 2),
+                                  child: Text(
+                                    'Adubo',
+                                    style: TextStyle(
+                                        color: kPrimaryColor,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: kDefaultPadding / 4),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ToogleButton(
+                                        id: 3,
+                                        firstText: '50',
+                                        secoundText: '100',
+                                      ),
+                                      SizedBox(height: kDefaultPadding / 2),
+                                      ToogleButton(
+                                        id: 4,
+                                        icon: true,
+                                        rotate: true,
+                                        firstIcon: Icons.refresh,
+                                        secoundIcon: Icons.refresh,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
+                      const SizedBox(width: kDefaultPadding / 2),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: kDefaultPadding / 2),
+                        child: Container(
+                          width: 320,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: kStrokeColor),
+                            borderRadius:
+                                BorderRadius.circular(kDefaultBorderSize),
+                          ),
+                          child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: kDefaultPadding / 2),
+                                  child: Text(
+                                    'Braquiária',
+                                    style: TextStyle(
+                                        color: kPrimaryColor,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: kDefaultPadding / 4),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ToogleButton(
+                                        id: 5,
+                                        firstText: '50',
+                                        secoundText: '100',
+                                      ),
+                                      SizedBox(height: kDefaultPadding / 2),
+                                      ToogleButton(
+                                        id: 6,
+                                        icon: true,
+                                        rotate: true,
+                                        firstIcon: Icons.refresh,
+                                        secoundIcon: Icons.refresh,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: kDefaultPadding / 2),
-                  isLoadingDevices
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DropdownButton(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20)),
-                              items: Bluetooth().getDeviceItems(),
-                              onChanged: (value) =>
-                                  setState(() => device = value!),
-                              value: device,
-                            ),
-                            const SizedBox(width: kDefaultPadding),
-                            JMButton(
-                              text: "Conectar",
-                              onPressed: () async {
-                                bluetooth['address'] = device.address;
-                              },
-                            )
-                          ],
-                        ),
-                  const SizedBox(height: kDefaultPadding / 2),
                 ],
               ),
               const SizedBox(height: kDefaultPadding),
@@ -413,11 +421,62 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                             ),
                           )
                         ],
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
+              const SizedBox(height: kDefaultPadding),
+              Column(
+                children: [
+                  const Text(
+                    "Controle largada e parada",
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.w300),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const BooleanCard(
+                          title: "Habilitar", id: 5, smallSize: true),
+                      const SizedBox(width: kDefaultPadding / 2),
+                      const ConfigCard(
+                        id: 29,
+                        title: "Calibração",
+                        unit: "",
+                        integer: false,
+                        step: 0.01,
+                        min: 0,
+                        max: 100,
+                      ),
+                      const SizedBox(width: kDefaultPadding / 2),
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: seedDropState.status == -1
+                              ? kDisabledColor
+                              : seedDropState.status == 0
+                                  ? kErrorColor
+                                  : kSuccessColor,
+                          borderRadius:
+                              BorderRadius.circular(kDefaultBorderSize),
+                        ),
+                        child: const Icon(
+                          Icons.compass_calibration,
+                          color: kSecondaryColor,
+                          size: 26,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: kDefaultPadding,
+                  )
+                ],
+              )
             ],
           ),
         ),

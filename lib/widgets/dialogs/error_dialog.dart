@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 import '../../utilities/constants/sizes.dart';
 import '../alert_box.dart';
 
-advancedDialog() {
+errorDialog() {
   JMAlertBox(
           title: 'Acesso restrito',
           onPressed: () {},
-       cancel: true,
+          cancel: true,
           insetPadding: 0,
-          body: const AdvancedDialog())
+          body: const ErrorDialog())
       .openJMAlertBox(navigatorKey.currentContext);
 }
 
-class AdvancedDialog extends StatefulWidget {
-  const AdvancedDialog({
+class ErrorDialog extends StatefulWidget {
+  const ErrorDialog({
     super.key,
   });
 
   @override
-  State<AdvancedDialog> createState() => _AdvancedDialogState();
+  State<ErrorDialog> createState() => _ErrorDialogState();
 }
 
-class _AdvancedDialogState extends State<AdvancedDialog> {
+class _ErrorDialogState extends State<ErrorDialog> {
   @override
   Widget build(BuildContext context) {
     return const Column(

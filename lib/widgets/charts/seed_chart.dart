@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../utilities/charts.dart';
@@ -79,11 +78,15 @@ class SeedChartState extends State<SeedChart> {
         BarChartRodData(
           borderRadius: BorderRadius.circular(kDefaultBorderSize),
           toY: y,
-          color: (y < 50 && y > 75) || (y > 125 && y < 150)
-              ? kWarningColor
-              : (y < 50) || (y > 150)
-                  ? kErrorColor
-                  : kSuccessColor,
+          color: (y >= 100 - seed["firstErrorLimit"] &&
+                  y <= 100 + seed["firstErrorLimit"])
+              ? kSuccessColor
+              : (y >= 100 - seed["secondErrorLimit"] &&
+                          y < 100 - seed["firstErrorLimit"]) ||
+                      (y > 100 + seed["firstErrorLimit"] &&
+                          y <= 100 + seed["secondErrorLimit"])
+                  ? kWarningColor
+                  : kErrorColor,
           width: width,
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
@@ -157,12 +160,12 @@ class SeedChartState extends State<SeedChart> {
             },
           ),
         ),
-        topTitles: AxisTitles(
+        topTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: false,
           ),
         ),
-        rightTitles: AxisTitles(
+        rightTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: false,
           ),

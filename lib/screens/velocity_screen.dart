@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../services/bluetooth.dart';
 import '../services/logger.dart';
@@ -87,10 +86,14 @@ class _VelocityScreenState extends State<VelocityScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
+                        velocity['speed'] = 0;
                         velocity['options'] = 1;
                       });
+                      Messages().message["velocity"]!();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          VelocityScreen.route, (route) => false);
                     },
                     child: Container(
                       width: 150,
@@ -118,8 +121,12 @@ class _VelocityScreenState extends State<VelocityScreen> {
                   // GestureDetector(
                   //   onTap: () {
                   //     setState(() {
+                  //  velocity['speed'] = 0;
                   //       velocity['options'] = 2;
                   //     });
+                  // Messages().message["velocity"]!();
+                  // Navigator.of(context).pushNamedAndRemoveUntil(
+                  // VelocityScreen.route, (route) => false);
                   //   },
                   //   child: Container(
                   //     width: 150,
@@ -145,8 +152,13 @@ class _VelocityScreenState extends State<VelocityScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
+                        velocity['speed'] = 0;
                         velocity['options'] = 3;
                       });
+                      Messages().message["velocity"]!();
+
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          VelocityScreen.route, (route) => false);
                     },
                     child: Container(
                       width: 150,

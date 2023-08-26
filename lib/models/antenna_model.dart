@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../utilities/global.dart';
+import '../utilities/messages.dart';
 
 class AntennaModel {
   double speed;
@@ -15,6 +16,11 @@ class AntennaManager extends ChangeNotifier {
   void updateSpeed(double speed) {
     _state.speed = speed;
     antenna['speed'] = speed;
+    if (antenna['speed'] > 1 && seedDropControl["isControlling"]) {
+      machine['diskFilling'] = false;
+      Messages().message["fillDisk"]!(0);
+      seedDropManager.update(0);
+    }
     notifyListeners();
   }
 }

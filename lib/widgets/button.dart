@@ -55,7 +55,7 @@ class _JMButtonState extends State<JMButton> {
         textStyle: (widget.moreButton || widget.lessButton)
             ? const TextStyle(
                 color: kSecondaryColor,
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.w500)
             : const TextStyle(color: kSecondaryColor),
       ),

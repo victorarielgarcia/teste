@@ -5,44 +5,6 @@ import '../services/bluetooth.dart';
 import 'global.dart';
 
 class Messages {
-  Uint8List kManutenceMessage = Uint8List.fromList(
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-  );
   void sendSettingsRequest() async {
     sendWithQueue = true;
     Messages().message["antennaAndLiftSensorModule"]!();
@@ -53,10 +15,54 @@ class Messages {
     Messages().message["velocity"]!();
     Messages().message["setMotors"]!();
     Messages().message["sensor"]!(LiftSensor().getSelectableOption());
+    Messages().message['requestSettings']!();
     sendWithQueue = false;
   }
 
   Map<String, Function> message = {
+    'manutence': () async {
+      Bluetooth().send(
+          0,
+          0,
+          99,
+          Uint8List.fromList([
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]),
+          1);
+    },
     'machine': () async {
       Bluetooth().send(
           0,
@@ -273,7 +279,7 @@ class Messages {
                 : 0,
             velocity['options'] == 1 || velocity['options'] == 2
                 ? (velocity['errorCompensation'] + 20).toInt()
-                : 0,
+                : 20,
             velocity['options']
           ]),
           1);
@@ -723,7 +729,7 @@ class Messages {
           ]),
           1);
     },
-    'calibration': (int fillRotor) async {
+    'calibration': (int fillRotor, int mode) async {
       Bluetooth().send(
           0,
           0,
@@ -762,7 +768,11 @@ class Messages {
             calibration['RPMToCalibrate'].toInt(),
             calibration['numberOfLaps'].toInt(),
             fillRotor,
-            calibration['motorNumber'].toInt(),
+            mode == 1
+                ? fertilizer['addressedLayout']
+                    [calibration['motorNumber'].toInt() - 1]
+                : brachiaria['addressedLayout']
+                    [calibration['motorNumber'].toInt() - 1],
           ]),
           1);
     },

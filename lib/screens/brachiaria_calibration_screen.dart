@@ -1,30 +1,29 @@
-import 'package:easytech_electric_blue/screens/fertilizer_screen.dart';
+import 'package:easytech_electric_blue/screens/brachiaria_calibration_result_screen.dart';
 import 'package:easytech_electric_blue/utilities/global.dart';
 import 'package:easytech_electric_blue/utilities/constants/sizes.dart';
 import 'package:easytech_electric_blue/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../services/bluetooth.dart';
-import '../services/logger.dart';
 import '../utilities/constants/colors.dart';
 import '../utilities/messages.dart';
 import '../widgets/back_button.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/config_card.dart';
 import '../widgets/top_bar.dart';
-import 'fertilizer_calibration_result_screen.dart';
+import 'brachiaria_screen.dart';
 
-class FertilizerCalibrationScreen extends StatefulWidget {
-  const FertilizerCalibrationScreen({super.key});
-  static const String route = '/fertilizer/calibration';
+class BrachiariaCalibrationScreen extends StatefulWidget {
+  const BrachiariaCalibrationScreen({super.key});
+  static const String route = '/brachiaria/calibration';
 
   @override
-  State<FertilizerCalibrationScreen> createState() =>
-      _FertilizerCalibrationScreenState();
+  State<BrachiariaCalibrationScreen> createState() =>
+      _BrachiariaCalibrationScreenState();
 }
 
-class _FertilizerCalibrationScreenState
-    extends State<FertilizerCalibrationScreen> {
+class _BrachiariaCalibrationScreenState
+    extends State<BrachiariaCalibrationScreen> {
   int fillRotor = 0;
   bool isCollecting = false;
   int porcentage = 0;
@@ -38,9 +37,9 @@ class _FertilizerCalibrationScreenState
       calibration['calibrationResult'] = 0;
       calibration['collectedWeight'] = 0;
       calibration['numberOfLinesCollected'] = 1;
-      Messages().message["calibration"]!(0, 1);
+      Messages().message["calibration"]!(0, 2);
       Navigator.pushNamedAndRemoveUntil(
-          context, FertilizerCalibrationResultScreen.route, (route) => false);
+          context, BrachiariaCalibrationResultScreen.route, (route) => false);
     }
   }
 
@@ -49,7 +48,7 @@ class _FertilizerCalibrationScreenState
     calibrationManager.addListener(calibrationListener);
     if (connected) {
       Bluetooth().currentScreen(context, 100);
-    } 
+    }
     super.initState();
   }
 
@@ -66,8 +65,7 @@ class _FertilizerCalibrationScreenState
       backgroundColor: kBackgroundColor,
       bottomNavigationBar: JMBottomNavigationBar(
         onExit: () {
-          AppLogger.log("SEND CONFIGURATIONS: $fertilizer");
-          Messages().message["calibration"]!(0, 1);
+          Messages().message["calibration"]!(0, 2);
         },
       ),
       appBar:
@@ -84,7 +82,7 @@ class _FertilizerCalibrationScreenState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Calibração Adubo",
+                        "Calibração Braquiária",
                         style: TextStyle(
                             fontSize: 24,
                             color: kPrimaryColor,
@@ -94,9 +92,9 @@ class _FertilizerCalibrationScreenState
                   ),
                   JMBackButton(
                     onPressed: () {
-                      Messages().message["calibration"]!(0, 1);
+                      Messages().message["calibration"]!(0, 2);
                       return Navigator.of(context).pushNamedAndRemoveUntil(
-                          FertilizerScreen.route, (route) => false);
+                          BrachiariaScreen.route, (route) => false);
                     },
                   ),
                 ],
@@ -148,7 +146,7 @@ class _FertilizerCalibrationScreenState
                             height: 60,
                             child: JMButton(
                               onPressed: () {
-                                Messages().message["calibration"]!(0, 1);
+                                Messages().message["calibration"]!(0, 2);
                                 setState(() {
                                   isCollecting = false;
                                 });
@@ -171,13 +169,12 @@ class _FertilizerCalibrationScreenState
                                 Stack(
                                   children: [
                                     const ConfigCard(
-                                      id: 11,
+                                      id: 17,
                                       title: 'Constante de peso',
                                       unit: 'g/volta',
-                                      min: 10,
-                                      max: 99,
+                                      min: 1,
+                                      max: 50,
                                       step: 0.1,
-                                      decimalPoint: 1,
                                       integer: false,
                                     ),
                                     SizedBox(
@@ -195,13 +192,13 @@ class _FertilizerCalibrationScreenState
                                                 splashColor: kSecondaryColor,
                                                 onTap: () async {
                                                   setState(() {
-                                                    fertilizer[
-                                                        'constantWeight'] = 48;
+                                                    brachiaria[
+                                                        'constantWeight'] = 5;
                                                   });
                                                   await Navigator
                                                       .pushNamedAndRemoveUntil(
                                                           context,
-                                                          FertilizerCalibrationScreen
+                                                          BrachiariaCalibrationScreen
                                                               .route,
                                                           (route) => false);
                                                 },
@@ -230,7 +227,7 @@ class _FertilizerCalibrationScreenState
                                   title: 'Número motor',
                                   unit: '',
                                   min: 1,
-                                  max: fertilizer['layout'].length.toDouble(),
+                                  max: brachiaria['layout'].length.toDouble(),
                                   step: 1,
                                 ),
                                 const SizedBox(width: kDefaultPadding / 2),
@@ -273,7 +270,7 @@ class _FertilizerCalibrationScreenState
                                         : fillRotor = 0;
                                   });
                                   Messages().message["calibration"]!(
-                                      fillRotor, 1);
+                                      fillRotor, 2);
                                 },
                                 text: "",
                                 icon: SvgPicture.asset(
@@ -292,7 +289,7 @@ class _FertilizerCalibrationScreenState
                               height: 80,
                               child: JMButton(
                                 onPressed: () {
-                                  Messages().message["calibration"]!(2, 1);
+                                  Messages().message["calibration"]!(2, 2);
                                   setState(() {
                                     isCollecting = true;
                                     porcentage = 0;

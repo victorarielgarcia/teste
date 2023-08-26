@@ -1,6 +1,9 @@
-
 import 'package:easytech_electric_blue/screens/sections_layout_screen.dart';
 import 'package:easytech_electric_blue/screens/seed_screen.dart';
+import 'package:easytech_electric_blue/screens/velocity_screen.dart';
+import 'package:easytech_electric_blue/services/timer.dart';
+import 'package:easytech_electric_blue/widgets/charts/seed_chart.dart';
+import 'package:easytech_electric_blue/widgets/speedometer_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../services/bluetooth.dart';
@@ -9,16 +12,13 @@ import '../utilities/constants/sizes.dart';
 import '../utilities/global.dart';
 import '../utilities/messages.dart';
 import '../widgets/bottom_navigation_bar.dart';
-import '../widgets/button.dart';
 import '../widgets/card.dart';
 import '../widgets/charts/brachiaria_chart.dart';
 import '../widgets/charts/fertilizer_chart.dart';
 import '../widgets/charts/quality_chart.dart';
-import '../widgets/charts/seed_chart.dart';
 import '../widgets/dialogs/set_motors_dialog.dart';
 import '../widgets/section_cut.dart';
 import '../widgets/simple_card.dart';
-import '../widgets/speedometer.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/work_view.dart';
 import 'brachiaria_screen.dart';
@@ -32,12 +32,41 @@ class WorkScreen extends StatefulWidget {
   State<WorkScreen> createState() => _WorkScreenState();
 }
 
-class _WorkScreenState extends State<WorkScreen> {
+class _WorkScreenState extends State<WorkScreen> with TickerProviderStateMixin {
+  int countDiskFill = 0;
+  late AnimationController _controller;
+  late Animation<double> animation;
+
   @override
   void initState() {
     if (connected) {
       Bluetooth().currentScreen(context, 0);
     }
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 7),
+      vsync: this,
+    );
+
+    animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
+    // Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+    //   if (mounted) {
+    //     setState(() {});
+    //   }
+    // });
+    // Adiciona um listener para o status da animação
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        machine['diskFilling'] = false;
+        // _controller.stop();
+        // _controller.value = 0;
+        _controller.reset(); // Opcionalmente, você pode reiniciar a animação
+      }
+    });
+
     super.initState();
   }
 
@@ -145,83 +174,140 @@ class _WorkScreenState extends State<WorkScreen> {
                               children: [
                                 Padding(
                                   padding:
-                                      const EdgeInsets.all(kDefaultPadding / 2),
+                                      const EdgeInsets.all(kDefaultPadding),
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        height: 50,
-                                        child: JMButton(
-                                            backgroundColor:
-                                                machine['stoppedMotors']
-                                                    ? kSecondaryColor
-                                                    : kErrorColor,
-                                            foregroundColor:
-                                                machine['stoppedMotors']
-                                                    ? kPrimaryColor
-                                                    : kSecondaryColor,
-                                            text: machine['stoppedMotors']
-                                                ? "Iniciar motores"
-                                                : "Parar motores",
-                                            onPressed: () {
-                                              setState(() {
-                                                if (machine['stoppedMotors']) {
-                                                  machine['stoppedMotors'] =
-                                                      false;
-                                                  Messages().message[
-                                                      "startMotors"]!();
-                                                } else {
-                                                  machine['stoppedMotors'] =
-                                                      true;
-                                                  Messages()
-                                                      .message["stopMotors"]!();
-                                                }
-                                              });
-                                            }),
+                                      // ClipRRect(
+                                      //   borderRadius: BorderRadius.circular(180),
+                                      //   child: SizedBox(
+                                      //     width: 55,
+                                      //     height: 55,
+                                      //     child: JMButton(
+                                      //         backgroundColor:
+                                      //             machine['stoppedMotors']
+                                      //                 ? kSecondaryColor
+                                      //                 : kErrorColor,
+                                      //         foregroundColor:
+                                      //             machine['stoppedMotors']
+                                      //                 ? kPrimaryColor
+                                      //                 : kSecondaryColor,
+                                      //                 icon: const Icon(Icons.block),
+                                      //         text: machine['stoppedMotors']
+                                      //             ? ""
+                                      //             : "",
+                                      //         onPressed: () {
+                                      //           setState(() {
+                                      //             if (machine['stoppedMotors']) {
+                                      //               machine['stoppedMotors'] =
+                                      //                   false;
+                                      //               Messages().message[
+                                      //                   "startMotors"]!();
+                                      //             } else {
+                                      //               machine['stoppedMotors'] =
+                                      //                   true;
+                                      //               Messages()
+                                      //                   .message["stopMotors"]!();
+                                      //             }
+                                      //           });
+                                      //         }),
+                                      //   ),
+                                      // ),
+
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (machine['diskFilling']) {
+                                            setState(() {
+                                              machine['diskFilling'] = false;
+                                            });
+                                            Messages().message["fillDisk"]!(0);
+                                            FillDiskTimer().stopTimer();
+                                            _controller.stop();
+                                            _controller.value = 0;
+                                          } else {
+                                            setState(() {
+                                              machine['diskFilling'] = true;
+                                            });
+                                            Messages().message["fillDisk"]!(1);
+                                            _controller.forward();
+                                            FillDiskTimer().startTimer();
+                                          }
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            SizedBox(
+                                              height: 65,
+                                              width: 65,
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                child: SizedBox(
+                                                  height: 35,
+                                                  width: 35,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: kSuccessColor,
+                                                    value: animation.value,
+                                                    strokeWidth: 10,
+                                                    strokeCap: StrokeCap.round,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(55),
+                                                child: SizedBox(
+                                                  height: 65,
+                                                  width: 65,
+                                                  child: Transform.rotate(
+                                                    angle: animation.value *
+                                                        2 *
+                                                        3.14159265,
+                                                    child: SvgPicture.asset(
+                                                      'assets/icons/disk.svg',
+                                                      colorFilter:
+                                                          const ColorFilter
+                                                              .mode(
+                                                              Color(0xFF393737),
+                                                              BlendMode.srcIn),
+                                                    ),
+                                                  ),
+                                                )),
+                                            SizedBox(
+                                              height: 65,
+                                              width: 65,
+                                              child: CircularProgressIndicator(
+                                                color: kSuccessColor,
+                                                value: animation.value,
+                                                strokeAlign: 0.5,
+                                                strokeWidth: 5,
+                                                backgroundColor: kStrokeColor
+                                                    .withOpacity(0.4),
+                                                strokeCap: StrokeCap.round,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      const SizedBox(
-                                          width: kDefaultPadding / 2),
-                                      SizedBox(
-                                        height: 50,
-                                        child: JMButton(
-                                            backgroundColor:
-                                                machine['diskFilling']
-                                                    ? kSuccessColor
-                                                    : kSecondaryColor,
-                                            foregroundColor:
-                                                machine['diskFilling']
-                                                    ? kSecondaryColor
-                                                    : kPrimaryColor,
-                                            text: machine['diskFilling']
-                                                ? "Enchendo..."
-                                                : "Encher disco",
-                                            onPressed: () {
-                                              if (machine['diskFilling']) {
-                                                setState(() {
-                                                  machine['diskFilling'] =
-                                                      false;
-                                                });
-                                                Messages()
-                                                    .message["fillDisk"]!(0);
-                                              } else {
-                                                setState(() {
-                                                  machine['diskFilling'] = true;
-                                                });
-                                                Messages()
-                                                    .message["fillDisk"]!(1);
-                                              }
-                                            }),
-                                      )
                                     ],
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: kDefaultPadding / 2,
-                                      horizontal: kDefaultPadding / 2),
-                                  child: Speedometer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamedAndRemoveUntil(context,
+                                        VelocityScreen.route, (route) => false);
+                                  },
+                                  child: const Padding(
+                                    padding:
+                                        EdgeInsets.all(kDefaultPadding / 2),
+                                    child: SpeedometerV2(),
+                                  ),
                                 ),
+                                // const Padding(
+                                //   padding: EdgeInsets.all(kDefaultPadding / 2),
+                                //   child: Speedometer(),
+                                // ),
                               ],
                             ),
                           )
@@ -248,7 +334,7 @@ class _WorkScreenState extends State<WorkScreen> {
                                   style: TextStyle(
                                       color: kPrimaryColor,
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 18),
+                                      fontSize: 16),
                                 ),
                               ),
                               Padding(
@@ -263,7 +349,6 @@ class _WorkScreenState extends State<WorkScreen> {
                           children: [
                             SimpleCard(
                               title: 'Área parcial',
-                              titleFontSize: 16,
                               text: '1020',
                               textFontSize: 28,
                               unit: 'ha',
@@ -294,7 +379,7 @@ class _WorkScreenState extends State<WorkScreen> {
                 const SizedBox(height: kDefaultPadding / 4),
                 GestureDetector(
                   onDoubleTap: () {
-                    setMotorsDialog(context);
+                    setMotorsDialog();
                   },
                   child: Column(
                     children: [

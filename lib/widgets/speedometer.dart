@@ -57,10 +57,10 @@ class _SpeedometerState extends State<Speedometer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
-      width: 180,
+      height: 170,
+      width: 170,
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
+          color: kBackgroundColor,
           borderRadius: BorderRadius.circular(180),
           border: Border.all(color: kStrokeColor)),
       child: SfRadialGauge(
@@ -109,7 +109,7 @@ class _SpeedometerState extends State<Speedometer> {
                       alignment: Alignment.bottomCenter,
                       children: [
                         Positioned(
-                          top: 0,
+                          top: 5,
                           child: Text(
                               speed.toStringAsFixed(1).replaceAll('.', ','),
                               style: const TextStyle(
@@ -118,11 +118,11 @@ class _SpeedometerState extends State<Speedometer> {
                                   fontWeight: FontWeight.bold)),
                         ),
                         const Positioned(
-                          top: 42,
+                          top: 44,
                           child: Text('km/h',
                               style: TextStyle(
                                   color: kPrimaryColor,
-                                  fontWeight: FontWeight.w500)),
+                                  fontWeight: FontWeight.w500, fontSize: 12)),
                         ),
                       ],
                     )),

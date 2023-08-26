@@ -93,7 +93,7 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
       }
       if (timerCount == 360) {
         cancelAddressing();
-        moduleAddresingDialog(context);
+        moduleAddresingDialog();
       }
     });
     super.initState();
@@ -122,7 +122,7 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
           disableNavigation
               ? GestureDetector(
                   onTap: () {
-                    machineLayoutDialog(context);
+                    machineLayoutDialog();
                   },
                   child: Container(
                     width: double.infinity,
@@ -162,7 +162,7 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               AdvancedScreen.route, (route) => false);
                         } else {
-                          machineLayoutDialog(context);
+                          machineLayoutDialog();
                         }
                       },
                     ),
@@ -332,7 +332,10 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
 
                                           const SizedBox(
                                               height: kDefaultPadding / 4),
-                                          !(module['addressed'][index] == 1)
+                                          !(module['addressed'][index] == 1) ||
+                                                  moduleVerionState
+                                                          .version[index] ==
+                                                      0
                                               ? const SizedBox()
                                               : Text(
                                                   'Versão: ${'${moduleVerionState.version[index].toString().padLeft(4, '0').substring(0, 1)}.${moduleVerionState.version[index].toString().padLeft(4, '0').substring(1, 2)}.${moduleVerionState.version[index].toString().padLeft(4, '0').substring(2, 4)}'}',
@@ -438,7 +441,6 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                                   if (module["layout"][index] <
                                                       12) {
                                                     setState(() {
-                                                      module["layout"][index]++;
                                                       module["layout"][index]++;
                                                     });
                                                   }

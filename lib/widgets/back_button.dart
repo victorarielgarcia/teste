@@ -11,13 +11,14 @@ class JMBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: kDefaultPadding,
+    return Padding(
+      padding: const EdgeInsets.only(left: kDefaultPadding),
       child: GestureDetector(
         onTap: onPressed,
-        child: const SizedBox(
-          width: 150,
-          child: Padding(
+        child: Container(
+          color: Colors.transparent,
+          width: 180,
+          child: const Padding(
             padding: EdgeInsets.symmetric(horizontal: kDefaultPadding),
             child: Row(
               children: [

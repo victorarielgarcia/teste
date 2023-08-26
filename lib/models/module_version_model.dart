@@ -6,7 +6,8 @@ class ModuleVersionModel {
 }
 
 class ModuleVersionManager extends ChangeNotifier {
-  final ModuleVersionModel _state = ModuleVersionModel(version: []);
+  final ModuleVersionModel _state =
+      ModuleVersionModel(version: [0, 0, 0, 0, 0]);
 
   ModuleVersionModel get state => _state;
 

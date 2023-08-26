@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:battery_plus/battery_plus.dart';
+import 'package:easytech_electric_blue/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import '../services/bluetooth.dart';
 import '../services/lock_task.dart';
 import '../services/logger.dart';
@@ -42,6 +44,24 @@ class TopBar extends StatelessWidget {
   }
 }
 
+class MovingAverage {
+  final int size;
+  final List<double> values;
+  int pointer = 0;
+  double sum = 0;
+
+  MovingAverage(this.size) : values = List.filled(size, 0.0);
+
+  void addValue(double value) {
+    sum -= values[pointer];
+    values[pointer] = value;
+    sum += value;
+    pointer = (pointer + 1) % size;
+  }
+
+  double get average => sum / size;
+}
+
 class TopTab extends StatefulWidget {
   const TopTab({
     super.key,
@@ -52,10 +72,14 @@ class TopTab extends StatefulWidget {
 }
 
 class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
+  bool isMoving = false;
+  MovingAverage movingAverage = MovingAverage(4);
+  int countMoving = 0;
+  bool isFirstTime = true;
   Timer? timer;
   int countMessage = -1;
+  StreamSubscription<AccelerometerEvent>? accelerometerSubscription;
 
-  int batteryLevel = 0;
   int day = 0;
   int month = 0;
   int year = 0;
@@ -75,11 +99,15 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     });
   }
 
-  void getBatteryLevel() async {
-    batteryLevel = await Battery().batteryLevel;
-    setState(() {
-      batteryLevel;
-    });
+  void getBatteryInfo() async {
+    battery["level"] = await Battery().batteryLevel;
+    battery["state"] = await Battery().onBatteryStateChanged.first;
+    if (mounted) {
+      setState(() {
+        battery["level"];
+        battery["state"];
+      });
+    }
   }
 
   void saveData() async {
@@ -90,6 +118,7 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     timer!.cancel();
+    accelerometerSubscription?.cancel();
     super.dispose();
   }
 
@@ -98,24 +127,56 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     saveData();
     getDate();
-    getBatteryLevel();
+    getBatteryInfo();
 
-    timer ??= Timer.periodic(const Duration(seconds: 3), (timer) async {
-      if (!sendWithQueue && connected) {
-        if (sendManutenceMessage) {
-          // Messages().message["setMotors"]!();
-          Messages().message["antennaAndLiftSensorModule"]!();
-          // await Bluetooth().send(0, 1, 0, Messages().kManutenceMessage, 1);
+    accelerometerSubscription =
+        accelerometerEvents.listen((AccelerometerEvent event) {
+      if (seedDropControl['enabled'] &&
+          antenna['speed'] < 1 &&
+          !seedDropControl["isControlling"]) {
+        // Get the value of acceleration in the desired axis, in this case, x
+        double currentValue = event.z;
+        // print("ACELEROMETRO: $event");
+
+        // If the last value is available, compare it with the current value
+        if (seedDropControl['lastValue'] != null) {
+          double difference = currentValue - seedDropControl['lastValue'];
+
+          // If the difference is greater than the threshold, consider it as movement
+          if (difference.abs() > seedDropControl['calibration']) {
+            // print('Movement detected!');
+            seedDropManager.update(1);
+            seedDropControl["isControlling"] = true;
+            Messages().message["fillDisk"]!(1);
+            machine['diskFilling'] = true;
+            Timer(const Duration(seconds: 5), () {
+              seedDropControl["isControlling"] = false;
+              machine['diskFilling'] = false;
+              Messages().message["fillDisk"]!(0);
+              seedDropManager.update(0);
+            });
+          } else {
+            seedDropControl["isControlling"] = false;
+          }
         }
       }
-      // bluetoothManager.changeConnectionState(checkConnection);
+    });
+
+    timer ??= Timer.periodic(const Duration(seconds: 3), (timer) async {
+      // LogSaver.generateLog();
+      if (!sendWithQueue && connected) {
+        if (sendManutenceMessage) {
+          Messages().message["manutence"]!();
+        }
+      }
       checkConnection = false;
       sendManutenceMessage = true;
-      if (!connected) {
-        Bluetooth().connect();
-      }
+      // if (!connected) {
+      //   Bluetooth().connect();
+      // }
+      // bluetoothManager.changeConnectionState(connected);
       getDate();
-      getBatteryLevel();
+      getBatteryInfo();
     });
     super.initState();
   }
@@ -132,6 +193,8 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
       timer!.cancel();
     } else {
       LockTask.enable();
+      Navigator.pushNamedAndRemoveUntil(
+          context, SplashScreen.route, (route) => false);
     }
   }
 
@@ -187,19 +250,35 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
                 Stack(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 7.0, top: 3.5),
+                      padding: const EdgeInsets.only(left: 14, top: 5),
                       child: Container(
-                        color: kPrimaryColor,
-                        width: 28 * batteryLevel / 100,
-                        height: 13,
+                        width: 24 * battery["level"] / 100,
+                        height: 12,
+                        decoration: BoxDecoration(
+                            color: kPrimaryColor,
+                            borderRadius:
+                                BorderRadius.circular(kDefaultBorderSize / 5)),
                       ),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 22,
                       child: SvgPicture.asset(
                         'assets/icons/battery.svg',
                       ),
                     ),
+                    battery["state"] == BatteryState.charging
+                        ? Positioned(
+                            left: -2,
+                            right: 0,
+                            top: 4.5,
+                            child: SizedBox(
+                              height: 13,
+                              child: SvgPicture.asset(
+                                'assets/icons/bolt.svg',
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
                 const SizedBox(

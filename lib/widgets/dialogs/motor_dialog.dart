@@ -1,4 +1,4 @@
-
+import 'package:easytech_electric_blue/utilities/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:soundpool/soundpool.dart';
@@ -8,7 +8,7 @@ import '../alert_box.dart';
 import '../button.dart';
 import '../simple_card.dart';
 
-motorDialog(BuildContext context, int index, String name) {
+motorDialog(int index, String name) {
   JMAlertBox(
           title: 'Informações avançadas do motor',
           width: 700,
@@ -18,7 +18,7 @@ motorDialog(BuildContext context, int index, String name) {
           // ok: false,
           insetPadding: 0,
           body: MotorDialog(index: index, name: name))
-      .openJMAlertBox(context);
+      .openJMAlertBox(navigatorKey.currentContext);
 }
 
 class MotorDialog extends StatefulWidget {

@@ -1,15 +1,16 @@
+import 'package:easytech_electric_blue/utilities/global.dart';
 import 'package:flutter/material.dart';
 import '../../utilities/constants/sizes.dart';
 import '../alert_box.dart';
 
-machineLayoutDialog(BuildContext context) {
+machineLayoutDialog() {
   JMAlertBox(
           title: 'Layout inválido',
           onPressed: () {},
           dismissible: true,
           insetPadding: 0,
           body: const MachineLayoutDialog())
-      .openJMAlertBox(context);
+      .openJMAlertBox(navigatorKey.currentContext);
 }
 
 class MachineLayoutDialog extends StatefulWidget {

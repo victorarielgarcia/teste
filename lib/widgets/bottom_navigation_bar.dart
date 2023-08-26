@@ -1,7 +1,11 @@
-
+import 'package:easytech_electric_blue/utilities/messages.dart';
+import 'package:easytech_electric_blue/widgets/button.dart';
+import 'package:easytech_electric_blue/widgets/dialogs/stop_motors_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../screens/advanced_screen.dart';
+import '../screens/brachiaria_calibration_result_screen.dart';
+import '../screens/brachiaria_calibration_screen.dart';
 import '../screens/brachiaria_screen.dart';
 import '../screens/fertilizer_calibration_result_screen.dart';
 import '../screens/fertilizer_calibration_screen.dart';
@@ -67,61 +71,28 @@ class _JMBottomNavigationBarState extends State<JMBottomNavigationBar> {
         )),
       ),
       height: 70,
-      child: Stack(
+      child: Row(
         children: [
-          // Back Button Icon
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  if (scrollController.hasClients) {
-                    scrollController.animateTo(
-                        scrollController.position.minScrollExtent,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.decelerate);
-                  }
-                },
-                child: Container(
-                  color: Colors.transparent,
-                  height: 70,
-                  width: 80,
-                  child: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: kJumilColor,
-                  ),
-                ),
+          GestureDetector(
+            onTap: () {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                    scrollController.position.minScrollExtent,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.decelerate);
+              }
+            },
+            child: Container(
+              color: Colors.transparent,
+              height: 60,
+              width: 60,
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: kJumilColor,
               ),
-            ],
+            ),
           ),
-          // Forward Button Icon
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  if (scrollController.hasClients) {
-                    scrollController.animateTo(
-                        scrollController.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.decelerate);
-                  }
-                },
-                child: Container(
-                  color: Colors.transparent,
-                  height: 70,
-                  width: 80,
-                  child: const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: kJumilColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Bottom Navigation Items
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: kDefaultPadding * 4),
+          Expanded(
             child: ListView(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
@@ -183,7 +154,13 @@ class _JMBottomNavigationBarState extends State<JMBottomNavigationBar> {
                         selected: ModalRoute.of(context)?.settings.name ==
                                 BrachiariaScreen.route
                             ? true
-                            : false,
+                            : ModalRoute.of(context)?.settings.name ==
+                                    BrachiariaCalibrationScreen.route
+                                ? true
+                                : ModalRoute.of(context)?.settings.name ==
+                                        BrachiariaCalibrationResultScreen.route
+                                    ? true
+                                    : false,
                         onExit: widget.onExit,
                       ),
                 BottomNavigationItem(
@@ -255,6 +232,46 @@ class _JMBottomNavigationBarState extends State<JMBottomNavigationBar> {
                   onExit: widget.onExit,
                 ),
               ],
+            ),
+          ),
+          // Forward Button Icon
+          GestureDetector(
+            onTap: () {
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                    scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.decelerate);
+              }
+            },
+            child: Container(
+              color: Colors.transparent,
+              height: 60,
+              width: 60,
+              child: const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: kJumilColor,
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(
+                right: kDefaultPadding, left: kDefaultPadding),
+            child: SizedBox(
+              width: 160,
+              height: 55,
+              child: JMButton(
+                  text: "Parar motores",
+                  backgroundColor: kErrorColor,
+                  foregroundColor: kSecondaryColor,
+                  onPressed: () {
+                    setState(() {
+                      machine['stoppedMotors'] = true;
+                      Messages().message["stopMotors"]!();
+                    });
+                    stopMotorsDialog();
+                  }),
             ),
           ),
         ],

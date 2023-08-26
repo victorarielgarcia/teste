@@ -1,15 +1,16 @@
+import 'package:easytech_electric_blue/utilities/global.dart';
 import 'package:flutter/material.dart';
 import '../../utilities/constants/sizes.dart';
 import '../alert_box.dart';
 
-moduleAddresingDialog(BuildContext context) {
+moduleAddresingDialog() {
   JMAlertBox(
           title: 'Tempo de endereçamento excedido',
           onPressed: () {},
           dismissible: true,
           insetPadding: 0,
           body: const ModuleAddresingDialog())
-      .openJMAlertBox(context);
+      .openJMAlertBox(navigatorKey.currentContext);
 }
 
 class ModuleAddresingDialog extends StatefulWidget {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:soundpool/soundpool.dart';
@@ -146,6 +145,9 @@ class _ConfigCardState extends State<ConfigCard> {
       case 28:
         tempValue = calibration['numberOfLinesCollected'];
         break;
+      case 29:
+        tempValue = seedDropControl['calibration'];
+        break;
     }
     setState(() {
       textEditingController.text = tempValue.toString();
@@ -266,6 +268,9 @@ class _ConfigCardState extends State<ConfigCard> {
         break;
       case 28:
         calibration['numberOfLinesCollected'] = int.parse(value);
+        break;
+      case 29:
+        seedDropControl['calibration'] = double.parse(value);
         break;
     }
   }
@@ -395,7 +400,6 @@ class _ConfigCardState extends State<ConfigCard> {
                       child: JMButton(
                         text: '-',
                         onPressed: () {
-                        
                           if (double.parse(textEditingController.text) >
                               widget.min) {
                             textEditingController.text = widget.integer
@@ -419,7 +423,6 @@ class _ConfigCardState extends State<ConfigCard> {
                       child: JMButton(
                         text: '+',
                         onPressed: () {
-                     
                           if (double.parse(textEditingController.text) <
                               widget.max) {
                             textEditingController.text = widget.integer

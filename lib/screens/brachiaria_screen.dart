@@ -5,9 +5,11 @@ import '../services/logger.dart';
 import '../utilities/constants/colors.dart';
 import '../utilities/global.dart';
 import '../utilities/messages.dart';
+import '../widgets/adjust_card.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/config_card.dart';
 import '../widgets/top_bar.dart';
+import 'brachiaria_calibration_screen.dart';
 
 class BrachiariaScreen extends StatefulWidget {
   const BrachiariaScreen({super.key});
@@ -39,27 +41,27 @@ class _BrachiariaScreenState extends State<BrachiariaScreen> {
       ),
       appBar:
           const PreferredSize(preferredSize: Size(800, 70), child: TopBar()),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(vertical: kDefaultPadding),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 "Configurações Braquiária",
                 style: TextStyle(
                     fontSize: 22,
                     color: kPrimaryColor,
                     fontWeight: FontWeight.w300),
               ),
-              SizedBox(height: kDefaultPadding),
+              const SizedBox(height: kDefaultPadding),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
                     children: [
-                      ConfigCard(
+                      const ConfigCard(
                         id: 16,
                         title: 'Taxa desejada',
                         unit: 'kg/ha',
@@ -68,16 +70,18 @@ class _BrachiariaScreenState extends State<BrachiariaScreen> {
                         step: 0.1,
                         integer: false,
                       ),
-                      ConfigCard(
-                        id: 17,
+                      AdjustCard(
+                        id: 2,
                         title: 'Constante de peso',
                         unit: 'g/volta',
-                        min: 1,
-                        max: 50,
-                        step: 0.1,
-                        integer: false,
+                        buttonText: 'Calibrar',
+                        onTap: () => Navigator.of(context)
+                            .pushNamedAndRemoveUntil(
+                                BrachiariaCalibrationScreen.route,
+                                (route) => false),
                       ),
-                      ConfigCard(
+              
+                      const ConfigCard(
                         id: 18,
                         title: 'Relação de engrenagens',
                         unit: '',
@@ -88,8 +92,8 @@ class _BrachiariaScreenState extends State<BrachiariaScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(width: kDefaultPadding),
-                  Column(
+                  const SizedBox(width: kDefaultPadding),
+                  const Column(
                     children: [
                       ConfigCard(
                         id: 19,

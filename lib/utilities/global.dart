@@ -1,20 +1,26 @@
+import 'package:battery_plus/battery_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../models/antenna_model.dart';
 import '../models/bluetooth_model.dart';
+import '../models/calibration_model.dart';
 import '../models/lift_sensor_model.dart';
 import '../models/module_addressing_model.dart';
 import '../models/module_version_model.dart';
 import '../models/motor_adressing_model.dart';
 import '../models/motor_model.dart';
 import '../models/nmea_model.dart';
+import '../models/seed_drop_model.dart';
 import '../models/seed_model.dart';
 import '../services/sound_manager.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 final _pattern = RegExp(r'(?:0x)?(\d+)');
 int binaryStringToInt(String binaryString) =>
     int.parse(_pattern.firstMatch(binaryString)!.group(1)!, radix: 2);
 
-String softwareVersion = '0.0.01';
+String softwareVersion = '0.0.02';
 
 SoundManager soundManager = SoundManager();
 
@@ -33,9 +39,9 @@ Map<String, dynamic> bluetooth = {
 };
 
 Map<String, dynamic> machine = {
-  'numberOfLines': 18,
+  'numberOfLines': 36,
   'spacing': 45,
-  'fertilizer': true,
+  'fertilizer': false,
   'brachiaria': false,
   'stoppedMotors': false,
   'diskFilling': false,
@@ -354,6 +360,7 @@ Map<String, dynamic> seed = {
   ]
 };
 
+CalibrationManager calibrationManager = CalibrationManager();
 Map<String, dynamic> calibration = {
   'motorNumber': 1,
   'RPMToCalibrate': 20,
@@ -555,6 +562,7 @@ Map<String, dynamic> nmea = {
 LiftSensorManager liftSensorManager = LiftSensorManager();
 Map<String, dynamic> liftSensor = {
   'options': 1,
+  'manualMode': true,
   'normallyOpen': false,
   'manualMachineLifted': false,
   'machineLifted': false,
@@ -573,7 +581,7 @@ ModuleAddresingManager moduleAddressingManager = ModuleAddresingManager();
 ModuleVersionManager moduleVersionManager = ModuleVersionManager();
 Map<String, dynamic> module = {
   'layout': <int>[12, 12],
-  'addressed': <int>[0, 0],
+  'addressed': <int>[0, 0, 0],
   'antenna': 1,
   'liftSensor': 1,
 };
@@ -641,4 +649,18 @@ Map<String, dynamic> section = {
     false,
     false,
   ],
+};
+
+SeedDropManager seedDropManager = SeedDropManager();
+Map<String, dynamic> seedDropControl = {
+  'enabled': false,
+  'calibration': 0.0,
+  'isControlling': false,
+  // NEW TEST
+  'lastValue': 0.0,
+};
+
+Map<String, dynamic> battery = {
+  'level': 0,
+  'state': BatteryState.unknown,
 };

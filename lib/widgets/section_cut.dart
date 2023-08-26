@@ -125,7 +125,7 @@ class _SectionCutButtonState extends State<SectionCutButton> {
           alignment: Alignment.bottomCenter,
           child: GestureDetector(
             onDoubleTap: () {
-              setMotorsDialog(context);
+              setMotorsDialog();
             },
             onVerticalDragUpdate: (details) {
               setState(() {

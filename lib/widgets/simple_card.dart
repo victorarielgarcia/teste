@@ -22,7 +22,7 @@ class SimpleCard extends StatelessWidget {
     this.height = 118,
     this.width = 320,
     this.unitFontSize = 20,
-    this.titleFontSize = 18,
+    this.titleFontSize = 16,
   });
 
   @override

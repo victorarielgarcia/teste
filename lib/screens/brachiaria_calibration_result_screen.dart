@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:easytech_electric_blue/screens/fertilizer_calibration_screen.dart';
-import 'package:easytech_electric_blue/screens/fertilizer_screen.dart';
 import 'package:easytech_electric_blue/utilities/global.dart';
 import 'package:easytech_electric_blue/utilities/constants/sizes.dart';
 import 'package:flutter/material.dart';
@@ -14,18 +12,20 @@ import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/button.dart';
 import '../widgets/config_card.dart';
 import '../widgets/top_bar.dart';
+import 'brachiaria_calibration_screen.dart';
+import 'brachiaria_screen.dart';
 
-class FertilizerCalibrationResultScreen extends StatefulWidget {
-  const FertilizerCalibrationResultScreen({super.key});
-  static const String route = '/fertilizer/calibration/result';
+class BrachiariaCalibrationResultScreen extends StatefulWidget {
+  const BrachiariaCalibrationResultScreen({super.key});
+  static const String route = '/brachiaria/calibration/result';
 
   @override
-  State<FertilizerCalibrationResultScreen> createState() =>
-      _FertilizerCalibrationResultScreenState();
+  State<BrachiariaCalibrationResultScreen> createState() =>
+      _BrachiariaCalibrationResultScreenState();
 }
 
-class _FertilizerCalibrationResultScreenState
-    extends State<FertilizerCalibrationResultScreen> {
+class _BrachiariaCalibrationResultScreenState
+    extends State<BrachiariaCalibrationResultScreen> {
   double constantWeight = 0.0;
 
   @override
@@ -58,7 +58,7 @@ class _FertilizerCalibrationResultScreenState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Calibração Adubo",
+                        "Calibração Braquiária",
                         style: TextStyle(
                             fontSize: 22,
                             color: kPrimaryColor,
@@ -69,7 +69,7 @@ class _FertilizerCalibrationResultScreenState
                   JMBackButton(
                     onPressed: () => Navigator.of(context)
                         .pushNamedAndRemoveUntil(
-                            FertilizerCalibrationScreen.route,
+                            BrachiariaCalibrationScreen.route,
                             (route) => false),
                   ),
                 ],
@@ -118,14 +118,14 @@ class _FertilizerCalibrationResultScreenState
                                         calibration['numberOfLinesCollected']))
                                 .toStringAsFixed(2));
 
-                            // Dar mensagem de erro se for de 10 a 100 g/voltas no adubo
+                            // Dar mensagem de erro se não for de 10 a 100 g/voltas no adubo
 
-                            // Dar mensagem de erro se for de 1 a 50 g/voltas na braquiaria
+                            // Dar mensagem de erro se não for de 1 a 50 g/voltas na braquiaria
 
                             calibration['calibrationResult'] = constantWeight;
                             Timer(const Duration(milliseconds: 350), () {
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                  FertilizerCalibrationResultScreen.route,
+                                  BrachiariaCalibrationResultScreen.route,
                                   (route) => false);
                             });
                           },
@@ -143,12 +143,12 @@ class _FertilizerCalibrationResultScreenState
                     unit: 'g/volta',
                     buttonText: 'Aplicar',
                     onTap: () async {
-                      fertilizer['constantWeight'] =
+                      brachiaria['constantWeight'] =
                           calibration['calibrationResult'];
-                      Messages().message["fertilizer"]!();
+                      Messages().message["brachiaria"]!();
                       if (mounted) {
                         await Navigator.of(context).pushNamedAndRemoveUntil(
-                            FertilizerScreen.route, (route) => false);
+                            BrachiariaScreen.route, (route) => false);
                       }
                     },
                   ),
