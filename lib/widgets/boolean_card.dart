@@ -50,6 +50,9 @@ class _BooleanCardState extends State<BooleanCard> {
       case 5:
         tempValue = seedDropControl['enabled'];
         break;
+      case 6:
+        tempValue = log['enabled'];
+        break;
     }
     setState(() {
       variable = tempValue;
@@ -139,10 +142,11 @@ class _BooleanCardState extends State<BooleanCard> {
                             case 4:
                               setState(() {
                                 liftSensor['manualMachineLifted'] = variable;
+                                liftSensor['machineLifted'] = variable;
                               });
                               liftSensor['normallyOpen'] = false;
                               liftSensorManager
-                                  .update(!liftSensor['manualMachineLifted']);
+                                  .update(!liftSensor['machineLifted']);
                               Messages().message["sensor"]!(
                                   LiftSensor().getSelectableOption());
                               break;
@@ -151,6 +155,11 @@ class _BooleanCardState extends State<BooleanCard> {
                                 seedDropControl['enabled'] = variable;
                               });
                               seedDropManager.update(variable ? 0 : -1);
+                              break;
+                            case 6:
+                              setState(() {
+                                log['enabled'] = variable;
+                              });
                               break;
                           }
                         },

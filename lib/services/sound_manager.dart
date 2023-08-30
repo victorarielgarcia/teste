@@ -1,4 +1,3 @@
-
 import 'package:flutter/services.dart';
 import 'package:soundpool/soundpool.dart';
 
@@ -15,7 +14,9 @@ class SoundManager {
     // Carregar todos os sons aqui
     soundIds['click'] = await _loadSound('assets/sounds/click.wav');
     soundIds['cut'] = await _loadSound('assets/sounds/cut.mp3');
-    // Adicione mais s   ons conforme necessário...
+    soundIds['error'] = await _loadSound('assets/sounds/error.mp3');
+    soundIds['lack'] = await _loadSound('assets/sounds/lack.mp3');
+    soundIds['beep'] = await _loadSound('assets/sounds/beep.mp3');
   }
 
   // Este método carrega um som e retorna seu ID

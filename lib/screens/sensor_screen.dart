@@ -60,11 +60,9 @@ class _SensorScreenState extends State<SensorScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        liftSensor = {
-                          'options': 1,
-                          'normallyOpen': false,
-                          'manualMachineLifted': false,
-                        };
+                        liftSensor['options'] = 1;
+                        liftSensor['normallyOpen'] = false;
+                        liftSensor['machineLifted'] = false;
                       });
                     },
                     child: Container(
@@ -93,11 +91,9 @@ class _SensorScreenState extends State<SensorScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        liftSensor = {
-                          'options': 2,
-                          'normallyOpen': false,
-                          'manualMachineLifted': true,
-                        };
+                        liftSensor['options'] = 2;
+                        liftSensor['normallyOpen'] = false;
+                        liftSensor['machineLifted'] = true;
                       });
                     },
                     child: Container(

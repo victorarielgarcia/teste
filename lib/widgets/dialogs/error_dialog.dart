@@ -5,12 +5,19 @@ import '../alert_box.dart';
 
 errorDialog() {
   JMAlertBox(
-          title: 'Acesso restrito',
-          onPressed: () {},
-          cancel: true,
-          insetPadding: 0,
-          body: const ErrorDialog())
-      .openJMAlertBox(navigatorKey.currentContext);
+    title: 'Desempenho do Motor',
+    onPressed: () {
+      // acceptedDialog['error'] = true;
+    },
+    cancel: false,
+    ok: true,
+    onCancel: () {
+      // acceptedDialog['error'] = true;
+    },
+    insetPadding: 0,
+    errorType: 2,
+    body: const ErrorDialog(),
+  ).openJMAlertBox(navigatorKey.currentContext);
 }
 
 class ErrorDialog extends StatefulWidget {
@@ -24,12 +31,26 @@ class ErrorDialog extends StatefulWidget {
 
 class _ErrorDialogState extends State<ErrorDialog> {
   @override
+  void initState() {
+    soundManager.playSound('error');
+    acceptedDialog['error'] = false;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // acceptedDialog['error'] = true;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Para você conseguir acessar .",
+          "A rotação do motor está significativamente fora dos parâmetros desejados. Recomendamos a verificação imediata para evitar danos ou problemas de performance.",
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: 13),
         ),
         SizedBox(height: kDefaultPadding),

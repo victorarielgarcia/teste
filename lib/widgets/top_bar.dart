@@ -4,7 +4,6 @@ import 'package:easytech_electric_blue/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-import '../services/bluetooth.dart';
 import '../services/lock_task.dart';
 import '../services/logger.dart';
 import '../services/storage_manager.dart';
@@ -22,21 +21,32 @@ class TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                  padding: const EdgeInsets.only(top: kDefaultPadding),
-                  child: SizedBox(
-                      height: 45,
-                      width: 185,
-                      child: Image.asset('assets/images/logo_jumil.png'))),
-              const TopTab(),
-              const TopIcons(),
-            ],
+        GestureDetector(
+          onTap: () {
+            motor['rpm'][44] = 10.0;
+            motorManager.updateRPM(
+              motor['rpm'],
+              motor['targetRPMBrachiaria'],
+              motor['targetRPMFertilizer'],
+              motor['targetRPMSeed'],
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: const EdgeInsets.only(top: kDefaultPadding),
+                    child: SizedBox(
+                        height: 45,
+                        width: 185,
+                        child: Image.asset('assets/images/logo_jumil.png'))),
+                const TopTab(),
+                const TopIcons(),
+              ],
+            ),
           ),
         ),
       ],
@@ -110,10 +120,6 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     }
   }
 
-  void saveData() async {
-    await StorageManager().save();
-  }
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -125,7 +131,7 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    saveData();
+    StorageManager().save();
     getDate();
     getBatteryInfo();
 
@@ -163,18 +169,6 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     });
 
     timer ??= Timer.periodic(const Duration(seconds: 3), (timer) async {
-      // LogSaver.generateLog();
-      if (!sendWithQueue && connected) {
-        if (sendManutenceMessage) {
-          Messages().message["manutence"]!();
-        }
-      }
-      checkConnection = false;
-      sendManutenceMessage = true;
-      // if (!connected) {
-      //   Bluetooth().connect();
-      // }
-      // bluetoothManager.changeConnectionState(connected);
       getDate();
       getBatteryInfo();
     });
@@ -247,6 +241,11 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
             ),
             Row(
               children: [
+                Text(
+                  "${battery["level"]}%",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w500, color: kPrimaryColor),
+                ),
                 Stack(
                   children: [
                     Padding(

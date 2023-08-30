@@ -1,6 +1,4 @@
 import 'package:easytech_electric_blue/utilities/global.dart';
-import 'package:easytech_electric_blue/utilities/messages.dart';
-import 'package:easytech_electric_blue/widgets/button.dart';
 import 'package:flutter/material.dart';
 import '../../utilities/constants/sizes.dart';
 import '../alert_box.dart';
@@ -10,7 +8,7 @@ bluetoothLoseConnectionDialog() {
           title: 'Perda de conexão',
           onPressed: () {},
           cancel: false,
-          ok: false,
+          ok: true,
           insetPadding: 0,
           errorType: 2,
           body: const BluetoothLoseConnectionDialog())
@@ -30,28 +28,22 @@ class BluetoothLoseConnectionDialog extends StatefulWidget {
 class _BluetoothLoseConnectionDialogState
     extends State<BluetoothLoseConnectionDialog> {
   @override
+  void initState() {
+    soundManager.playSound('error');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Os motores foram parados e permanecerão desativados até que seja tomada uma ação.",
+        Text(
+          "Houve uma falha na comunicação com os módulos, uma nova tentativa de conexão será realizada.",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 16),
         ),
-        const SizedBox(height: kDefaultPadding * 1.5),
-        Center(
-            child: SizedBox(
-                height: 70,
-                width: 200,
-                child: JMButton(
-                    text: "Retomar motores",
-                    onPressed: () {
-                      machine['stoppedMotors'] = false;
-                      Messages().message["startMotors"]!();
-                      Navigator.of(context).pop();
-                    }))),
-        const SizedBox(height: kDefaultPadding),
+        SizedBox(height: kDefaultPadding),
       ],
     );
   }

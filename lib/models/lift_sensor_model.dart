@@ -1,6 +1,5 @@
-
+import 'package:easytech_electric_blue/services/speed.dart';
 import 'package:flutter/material.dart';
-
 import '../utilities/constants/colors.dart';
 import '../utilities/global.dart';
 
@@ -20,8 +19,6 @@ class LiftSensor {
         selectableOption = 1;
       }
     }
-    // print("SELECTABLE: $selectableOption");
-
     return selectableOption;
   }
 }
@@ -40,22 +37,18 @@ class LiftSensorManager extends ChangeNotifier {
 
   void update(bool machineLifted) {
     _state.machineLifted = machineLifted;
-    double speed = 0.0;
-    if (velocity['options'] == 1) {
-      speed = antenna['speed'];
-    } else if (velocity['options'] == 2) {
-      speed = nmea['speed'];
-    } else if (velocity['options'] == 3) {
-     
-      speed = velocity['speed'].toDouble();
-    }
-
+    double speed = Speed.getCurrentVelocity();
     if (speed > 0 && machineLifted) {
       _state.color = kSuccessColor;
+      // connected ? error['isPlanting'] = true : error['isPlanting'] = false;
+      status['isPlanting'] = true;
     } else if (speed > 0 && !machineLifted) {
       _state.color = kWarningColor;
+      status['isPlanting'] = false;
     } else {
       _state.color = kDisabledColor;
+      status['isPlanting'] = false;
+      status['showMonitoring'] = false;
     }
     notifyListeners();
   }

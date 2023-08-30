@@ -145,171 +145,6 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                             }),
                       ],
                     ),
-              const SizedBox(height: kDefaultPadding / 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: kDefaultPadding / 2),
-                        child: Container(
-                          width: 320,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: kStrokeColor),
-                            borderRadius:
-                                BorderRadius.circular(kDefaultBorderSize),
-                          ),
-                          child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: kDefaultPadding / 2),
-                                  child: Text(
-                                    'Semente',
-                                    style: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 18),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: kDefaultPadding / 4),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ToogleButton(
-                                        id: 1,
-                                        firstText: '50',
-                                        secoundText: '100',
-                                      ),
-                                      SizedBox(height: kDefaultPadding / 2),
-                                      ToogleButton(
-                                        id: 2,
-                                        icon: true,
-                                        rotate: true,
-                                        firstIcon: Icons.refresh,
-                                        secoundIcon: Icons.refresh,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                        ),
-                      ),
-                      const SizedBox(width: kDefaultPadding / 2),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: kDefaultPadding / 2),
-                        child: Container(
-                          width: 320,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: kStrokeColor),
-                            borderRadius:
-                                BorderRadius.circular(kDefaultBorderSize),
-                          ),
-                          child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: kDefaultPadding / 2),
-                                  child: Text(
-                                    'Adubo',
-                                    style: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 18),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: kDefaultPadding / 4),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ToogleButton(
-                                        id: 3,
-                                        firstText: '50',
-                                        secoundText: '100',
-                                      ),
-                                      SizedBox(height: kDefaultPadding / 2),
-                                      ToogleButton(
-                                        id: 4,
-                                        icon: true,
-                                        rotate: true,
-                                        firstIcon: Icons.refresh,
-                                        secoundIcon: Icons.refresh,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                        ),
-                      ),
-                      const SizedBox(width: kDefaultPadding / 2),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: kDefaultPadding / 2),
-                        child: Container(
-                          width: 320,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: kStrokeColor),
-                            borderRadius:
-                                BorderRadius.circular(kDefaultBorderSize),
-                          ),
-                          child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: kDefaultPadding / 2),
-                                  child: Text(
-                                    'Braquiária',
-                                    style: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 18),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: kDefaultPadding / 4),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ToogleButton(
-                                        id: 5,
-                                        firstText: '50',
-                                        secoundText: '100',
-                                      ),
-                                      SizedBox(height: kDefaultPadding / 2),
-                                      ToogleButton(
-                                        id: 6,
-                                        icon: true,
-                                        rotate: true,
-                                        firstIcon: Icons.refresh,
-                                        secoundIcon: Icons.refresh,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
               const SizedBox(height: kDefaultPadding),
               Column(
                 children: [
@@ -436,6 +271,7 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                         color: kPrimaryColor,
                         fontWeight: FontWeight.w300),
                   ),
+                  const SizedBox(height: kDefaultPadding / 2),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -476,7 +312,208 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                     height: kDefaultPadding,
                   )
                 ],
-              )
+              ),
+              Column(
+                children: [
+                  const Text(
+                    "Configuração motores",
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.w300),
+                  ),
+                  const SizedBox(height: kDefaultPadding / 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: kDefaultPadding / 2),
+                            child: Container(
+                              width: 320,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: kStrokeColor),
+                                borderRadius:
+                                    BorderRadius.circular(kDefaultBorderSize),
+                              ),
+                              child: const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: kDefaultPadding / 2),
+                                      child: Text(
+                                        'Semente',
+                                        style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: kDefaultPadding / 4),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          ToogleButton(
+                                            id: 1,
+                                            firstText: '60',
+                                            secoundText: '100',
+                                          ),
+                                          SizedBox(height: kDefaultPadding / 2),
+                                          ToogleButton(
+                                            id: 2,
+                                            icon: true,
+                                            rotate: true,
+                                            firstIcon: Icons.refresh,
+                                            secoundIcon: Icons.refresh,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ),
+                          const SizedBox(width: kDefaultPadding / 2),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: kDefaultPadding / 2),
+                            child: Container(
+                              width: 320,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: kStrokeColor),
+                                borderRadius:
+                                    BorderRadius.circular(kDefaultBorderSize),
+                              ),
+                              child: const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: kDefaultPadding / 2),
+                                      child: Text(
+                                        'Adubo',
+                                        style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: kDefaultPadding / 4),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          ToogleButton(
+                                            id: 3,
+                                            firstText: '60',
+                                            secoundText: '100',
+                                          ),
+                                          SizedBox(height: kDefaultPadding / 2),
+                                          ToogleButton(
+                                            id: 4,
+                                            icon: true,
+                                            rotate: true,
+                                            firstIcon: Icons.refresh,
+                                            secoundIcon: Icons.refresh,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ),
+                          const SizedBox(width: kDefaultPadding / 2),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: kDefaultPadding / 2),
+                            child: Container(
+                              width: 320,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: kStrokeColor),
+                                borderRadius:
+                                    BorderRadius.circular(kDefaultBorderSize),
+                              ),
+                              child: const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: kDefaultPadding / 2),
+                                      child: Text(
+                                        'Braquiária',
+                                        style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 18),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: kDefaultPadding / 4),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          ToogleButton(
+                                            id: 5,
+                                            firstText: '60',
+                                            secoundText: '100',
+                                          ),
+                                          SizedBox(height: kDefaultPadding / 2),
+                                          ToogleButton(
+                                            id: 6,
+                                            icon: true,
+                                            rotate: true,
+                                            firstIcon: Icons.refresh,
+                                            secoundIcon: Icons.refresh,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: kDefaultPadding),
+              const Column(
+                children: [
+                  Text(
+                    "Gravar logs",
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.w300),
+                  ),
+                  SizedBox(height: kDefaultPadding / 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BooleanCard(title: "Habilitar", id: 6, smallSize: false),
+                    ],
+                  ),
+                  SizedBox(
+                    height: kDefaultPadding,
+                  )
+                ],
+              ),
             ],
           ),
         ),

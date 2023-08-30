@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../utilities/charts.dart';
@@ -13,7 +12,6 @@ class FertilizerChart extends StatefulWidget {
 }
 
 class FertilizerChartState extends State<FertilizerChart> {
-
   final motorState = motorManager.state;
   void motorListener() {
     if (mounted) {
@@ -68,25 +66,18 @@ class FertilizerChartState extends State<FertilizerChart> {
     } else {
       double percentageDifference =
           ((rpmCurrent - rpmTarget).abs() / rpmTarget) * 100;
-      if (percentageDifference >= 5 && percentageDifference < 10) {
+      if ( percentageDifference < 5) {
         error = 0;
-      } else if (percentageDifference >= 10 && percentageDifference < 15) {
+      } else if (percentageDifference >= 5 && percentageDifference < 10) {
         error = 1;
-      } else if (percentageDifference >= 15) {
+      } else if (percentageDifference >= 10) {
         error = 2;
       }
     }
-    double speed = 0.0;
-    if (velocity['options'] == 1) {
-      speed = antenna['speed'];
-    } else if (velocity['options'] == 2) {
-      speed = nmea['speed'];
-    } else if (velocity['options'] == 3) {
-      speed = velocity['speed'].toDouble();
-    }
-    if (speed == 0 && rpmCurrent < 1) {
-      error = -1;
-    }
+    // double speed = Speed.getCurrentVelocity();
+    // if (speed == 0 && rpmCurrent < 1) {
+    //   error = -1;
+    // }
     return BarChartGroupData(
       x: x,
       barRods: [

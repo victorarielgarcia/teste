@@ -37,15 +37,15 @@ class QualityChart extends StatelessWidget {
                     sections: [
                       PieChartSectionData(
                         color: kSuccessColor,
-                        value: 100,
+                        value: 0,
                         radius: 20,
                         showTitle: false,
                       ),
-                      // PieChartSectionData(
-                      //   color: kSecondaryColor,
-                      //   radius: 20,
-                      //   showTitle: false,
-                      // ),
+                      PieChartSectionData(
+                        color: kSecondaryColor,
+                        radius: 20,
+                        showTitle: false,
+                      ),
                     ],
                   ),
                   swapAnimationDuration: const Duration(seconds: 1),
@@ -58,7 +58,7 @@ class QualityChart extends StatelessWidget {
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("100% singulação"),
+            Text("0% singulação"),
             Text("0% falhas"),
             Text("0% duplas"),
           ],

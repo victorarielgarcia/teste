@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:easytech_electric_blue/services/speed.dart';
+import 'package:easytech_electric_blue/services/storage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -94,29 +96,29 @@ class Bluetooth {
   }
 
   Future connect() async {
-    try {
-      await FlutterBluetoothSerial.instance.requestEnable();
+    // try {
+    //   await FlutterBluetoothSerial.instance.requestEnable();
 
-      await connection?.finish();
-      await connection?.close();
-      sendWithQueue = true;
-      //  connection = await BluetoothConnection.toAddress('A8:42:E3:89:9F:62');
-      connection = await BluetoothConnection.toAddress(bluetooth['address']);
-      AppLogger.log("Bluetooth Connected!");
-      connected = true;
-      bluetoothManager.changeConnectionState(connected);
+    //   await connection?.finish();
+    //   await connection?.close();
+    //   sendWithQueue = true;
+    //   //  connection = await BluetoothConnection.toAddress('A8:42:E3:89:9F:62');
+    //   connection = await BluetoothConnection.toAddress(bluetooth['address']);
+    //   AppLogger.log("Bluetooth Connected!");
+    //   connected = true;
+    //   bluetoothManager.changeConnectionState(connected);
 
-      Messages().sendSettingsRequest();
-      sendWithQueue = false;
-      startRead(connection!.input!.cast<List<int>>());
-    } catch (e) {
-      AppLogger.error("ERROR CONNECTION BLUETOOTH: $e");
-      Timer(const Duration(seconds: 8), () {
-        connect();
-      });
-
-      connected = false;
-    }
+    //   // Messages().sendSettingsRequest();
+    //   sendWithQueue = false;
+    //   startRead(connection!.input!.cast<List<int>>());
+    // } catch (e) {
+    //   AppLogger.error("ERROR CONNECTION BLUETOOTH: $e");
+    //   // Timer(const Duration(seconds: 8), () {
+    //   //   connect();
+    //   // });
+    //   connected = false;
+    //   bluetoothManager.changeConnectionState(connected);
+    // }
   }
 
   send(int deviceId, int type, int messageId, Uint8List data, int cks) async {
@@ -260,66 +262,68 @@ class Bluetooth {
 
   getSeedRate(int id, List<int> message) {
     try {
-      if (id == 3) {
-        // ERROR UPDATE SCREEN
-        if (seed['rate'].isNotEmpty) seed['rate'].clear();
-        int j = 0;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
-            seed['rate'].add(rate);
-            tempMessage.clear();
-            j = -1;
+      if (status['showMonitoring ']) {
+        if (id == 3) {
+          // ERROR UPDATE SCREEN
+          if (seed['rate'].isNotEmpty) seed['rate'].clear();
+          int j = 0;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
+              seed['rate'].add(rate);
+              tempMessage.clear();
+              j = -1;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 4) {
-        int j = 0;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
-            seed['rate'].add(rate);
-            tempMessage.clear();
-            j = -1;
+        if (id == 4) {
+          int j = 0;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
+              seed['rate'].add(rate);
+              tempMessage.clear();
+              j = -1;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 5) {
-        int j = 0;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
-            seed['rate'].add(rate);
-            tempMessage.clear();
-            j = -1;
+        if (id == 5) {
+          int j = 0;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
+              seed['rate'].add(rate);
+              tempMessage.clear();
+              j = -1;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 6) {
-        int j = 0;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 23; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
-            seed['rate'].add(rate);
-            tempMessage.clear();
-            j = -1;
+        if (id == 6) {
+          int j = 0;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 23; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rate = ((tempMessage[0] * 256) + tempMessage[1]) / 100;
+              seed['rate'].add(rate);
+              tempMessage.clear();
+              j = -1;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 3 || id == 4 || id == 5 || id == 6) {
-        seedManager.updateRate((seed['rate'] as List).cast<double>());
+        if (id == 3 || id == 4 || id == 5 || id == 6) {
+          seedManager.updateRate((seed['rate'] as List).cast<double>());
+        }
       }
     } catch (e) {
       AppLogger.error("GET RATE ERROR: $e");
@@ -328,135 +332,131 @@ class Bluetooth {
 
   getMotorsRPM(id, message) {
     try {
-      if (id == 7) {
-        //   AppLogger.error("RPM: ${motor['rpm']}");
-        // if (motor['rpm'].isNotEmpty) motor['rpm'].clear();
-        int j = 0;
-        int k = 0;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
-            motor['rpm'][k] = rpm;
-            k++;
-            tempMessage.clear();
-            j = -1;
+      if (status['showMonitoring ']) {
+        if (id == 7) {
+          //   AppLogger.error("RPM: ${motor['rpm']}");
+          // if (motor['rpm'].isNotEmpty) motor['rpm'].clear();
+          int j = 0;
+          int k = 0;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
+              motor['rpm'][k] = rpm;
+              k++;
+              tempMessage.clear();
+              j = -1;
+            }
+
+            j++;
           }
-
-          j++;
         }
-      }
 
-      if (id == 8) {
-        int j = 0;
-        int k = 17;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
-            motor['rpm'][k] = rpm;
-            tempMessage.clear();
-            j = -1;
-            k++;
+        if (id == 8) {
+          int j = 0;
+          int k = 17;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
+              motor['rpm'][k] = rpm;
+              tempMessage.clear();
+              j = -1;
+              k++;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 9) {
-        int j = 0;
-        int k = 34;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
-            motor['rpm'][k] = rpm;
-            tempMessage.clear();
-            j = -1;
-            k++;
+        if (id == 9) {
+          int j = 0;
+          int k = 34;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
+              motor['rpm'][k] = rpm;
+              tempMessage.clear();
+              j = -1;
+              k++;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 10) {
-        int j = 0;
-        int k = 51;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
-            motor['rpm'][k] = rpm;
-            tempMessage.clear();
-            j = -1;
-            k++;
+        if (id == 10) {
+          int j = 0;
+          int k = 51;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
+              motor['rpm'][k] = rpm;
+              tempMessage.clear();
+              j = -1;
+              k++;
+            }
+            j++;
           }
-          j++;
         }
-      }
-      if (id == 11) {
-        int j = 0;
-        int k = 68;
-        List<int> tempMessage = [];
-        for (int i = 4; i < 38; i++) {
-          tempMessage.add(message[i]);
-          if (j == 1) {
-            double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
-            motor['rpm'][k] = rpm;
-            tempMessage.clear();
-            j = -1;
-            k++;
+        if (id == 11) {
+          int j = 0;
+          int k = 68;
+          List<int> tempMessage = [];
+          for (int i = 4; i < 38; i++) {
+            tempMessage.add(message[i]);
+            if (j == 1) {
+              double rpm = ((tempMessage[0] * 256) + tempMessage[1]) / 81;
+              motor['rpm'][k] = rpm;
+              tempMessage.clear();
+              j = -1;
+              k++;
+            }
+            j++;
           }
-          j++;
-        }
-      }
-
-      //   AppLogger.error("MOTOR length: ${motor['rpm'].length}");
-      if (id == 7 || id == 8 || id == 9 || id == 10 || id == 11) {
-        double speed = 0.0;
-
-        if (velocity['options'] == 1) {
-          speed = antenna['speed'];
-        } else if (velocity['options'] == 2) {
-          speed = nmea['speed'];
-        } else if (velocity['options'] == 3) {
-          speed = velocity['speed'].toDouble();
         }
 
-        if (machine['diskFilling']) {
-          motor['targetRPMSeed'] = 10.0;
-        } else {
-          motor['targetRPMSeed'] =
-              ((seed['desiredRate'] / seed['numberOfHoles']) *
-                  (speed / 3.6) *
-                  60);
-        }
+        //   AppLogger.error("MOTOR length: ${motor['rpm'].length}");
+        if (id == 7 || id == 8 || id == 9 || id == 10 || id == 11) {
+          double speed = Speed.getCurrentVelocity();
 
-        motor['targetRPMFertilizer'] = (((fertilizer['desiredRate'] /
-                        (10000 / machine['spacing']) /
-                        fertilizer['constantWeight']) *
+          if (machine['diskFilling']) {
+            motor['targetRPMSeed'] = 10.0;
+          } else {
+            motor['targetRPMSeed'] =
+                ((seed['desiredRate'] / seed['numberOfHoles']) *
                     (speed / 3.6) *
-                    60) *
-                10) /
-            fertilizer['gearRatio'];
+                    60);
+          }
 
-        motor['targetRPMBrachiaria'] = (((brachiaria['desiredRate'] /
-                        (10000 / machine['spacing']) /
-                        brachiaria['constantWeight']) *
-                    (speed / 3.6) *
-                    60) *
-                10) /
-            brachiaria['gearRatio'];
+          motor['targetRPMFertilizer'] = (((fertilizer['desiredRate'] /
+                          (10000 / machine['spacing']) /
+                          fertilizer['constantWeight']) *
+                      (speed / 3.6) *
+                      60) *
+                  10) /
+              fertilizer['gearRatio'];
 
-        motorManager.updateRPM(
-          motor['rpm'],
-          motor['targetRPMBrachiaria'],
-          motor['targetRPMFertilizer'],
-          motor['targetRPMSeed'],
-        );
-        LogSaver.generateLog();
+          motor['targetRPMBrachiaria'] = (((brachiaria['desiredRate'] /
+                          (10000 / machine['spacing']) /
+                          brachiaria['constantWeight']) *
+                      (speed / 3.6) *
+                      60) *
+                  10) /
+              brachiaria['gearRatio'];
+
+          motorManager.updateRPM(
+            motor['rpm'],
+            motor['targetRPMBrachiaria'],
+            motor['targetRPMFertilizer'],
+            motor['targetRPMSeed'],
+          );
+          if (log['enabled']) {
+            LogSaver.generateLog();
+          }
+        }
       }
     } catch (e) {
       AppLogger.error("GET MOTORS RPM ERROR: $e");
@@ -724,6 +724,10 @@ getSettingsRequest(id, message) async {
     if (id == 46) {
       // if (!sendWithQueue) {
       Messages().sendSettingsRequest();
+      // if (settings['sendAntennaAndLiftSensorModule']) {
+      Messages().message["antennaAndLiftSensorModule"]!();
+      // }
+      settings['sendAntennaAndLiftSensorModule'] = true;
       // }
     }
   } catch (e) {
@@ -735,8 +739,11 @@ getSettingsRequest(id, message) async {
 getAntennaAndLiftSensorModule(id, message) async {
   try {
     if (id == 44) {
-      module['antenna'] = message[4];
-      module['liftSensor'] = message[5];
+      if (message[4] != 0 && message[5] != 0) {
+        module['antenna'] = message[4];
+        module['liftSensor'] = message[5];
+        await StorageManager().save();
+      }
     }
   } catch (e) {
     AppLogger.error("GET ANTENNA AND LIFT SENSOR MODULE REQUEST ERROR: $e");

@@ -1,3 +1,4 @@
+import 'package:easytech_electric_blue/services/speed.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../utilities/constants/colors.dart';
@@ -35,15 +36,7 @@ class _SpeedometerV2State extends State<SpeedometerV2> {
 
   @override
   void initState() {
-    if (velocity['options'] == 1) {
-      speed = antenna['speed'];
-      antennaManager.addListener(antennaListener);
-    } else if (velocity['options'] == 2) {
-      speed = nmea['speed'];
-      nmeaManager.addListener(nmeaListener);
-    } else if (velocity['options'] == 3) {
-      speed = velocity['speed'].toDouble();
-    }
+    speed = Speed.getCurrentVelocity();
     super.initState();
   }
 

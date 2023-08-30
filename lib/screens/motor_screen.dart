@@ -1,3 +1,4 @@
+import 'package:easytech_electric_blue/services/speed.dart';
 import 'package:flutter/material.dart';
 import '../services/bluetooth.dart';
 import '../utilities/constants/colors.dart';
@@ -104,14 +105,8 @@ class _MotorScreenState extends State<MotorScreen> {
                               // else if (percentageDifference >= 20) {
                               //   error = 3;
                               // }
-                              double speed = 0.0;
-                              if (velocity['options'] == 1) {
-                                speed = antenna['speed'];
-                              } else if (velocity['options'] == 2) {
-                                speed = nmea['speed'];
-                              } else if (velocity['options'] == 3) {
-                                speed = velocity['speed'].toDouble();
-                              }
+                              double speed = Speed.getCurrentVelocity();
+
                               if (speed == 0 && rpmCurrent < 1) {
                                 error = -1;
                               }
@@ -180,14 +175,8 @@ class _MotorScreenState extends State<MotorScreen> {
                             // else if (percentageDifference >= 20) {
                             //   error = 3;
                             // }
-                            double speed = 0.0;
-                            if (velocity['options'] == 1) {
-                              speed = antenna['speed'];
-                            } else if (velocity['options'] == 2) {
-                              speed = nmea['speed'];
-                            } else if (velocity['options'] == 3) {
-                              speed = velocity['speed'].toDouble();
-                            }
+                            double speed = Speed.getCurrentVelocity();
+                            
                             if (speed == 0 && rpmCurrent < 1) {
                               error = -1;
                             }
@@ -240,14 +229,7 @@ class _MotorScreenState extends State<MotorScreen> {
                       // else if (percentageDifference >= 20) {
                       //   error = 3;
                       // }
-                      double speed = 0.0;
-                      if (velocity['options'] == 1) {
-                        speed = antenna['speed'];
-                      } else if (velocity['options'] == 2) {
-                        speed = nmea['speed'];
-                      } else if (velocity['options'] == 3) {
-                        speed = velocity['speed'].toDouble();
-                      }
+                      double speed = Speed.getCurrentVelocity();
                       if (speed == 0 && rpmCurrent < 1) {
                         error = -1;
                       }

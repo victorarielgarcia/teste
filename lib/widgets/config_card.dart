@@ -249,6 +249,7 @@ class _ConfigCardState extends State<ConfigCard> {
       case 22:
         velocity['speed'] = double.parse(value);
         Messages().message["velocity"]!();
+        liftSensorManager.update(!liftSensor['machineLifted']);
         break;
       case 23:
         velocity['errorCompensation'] = int.parse(value);

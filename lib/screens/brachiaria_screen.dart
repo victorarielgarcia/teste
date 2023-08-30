@@ -80,8 +80,12 @@ class _BrachiariaScreenState extends State<BrachiariaScreen> {
                                 BrachiariaCalibrationScreen.route,
                                 (route) => false),
                       ),
-              
-                      const ConfigCard(
+                    ],
+                  ),
+                  const SizedBox(width: kDefaultPadding),
+                  const Column(
+                    children: [
+                       ConfigCard(
                         id: 18,
                         title: 'Relação de engrenagens',
                         unit: '',
@@ -90,29 +94,24 @@ class _BrachiariaScreenState extends State<BrachiariaScreen> {
                         step: 0.1,
                         integer: false,
                       ),
-                    ],
-                  ),
-                  const SizedBox(width: kDefaultPadding),
-                  const Column(
-                    children: [
-                      ConfigCard(
-                        id: 19,
-                        title: 'Limite de erro RPM - Verde',
-                        unit: '%',
-                        min: 2,
-                        max: 20,
-                        step: 0.1,
-                        integer: false,
-                      ),
-                      ConfigCard(
-                        id: 20,
-                        title: 'Limite de erro RPM - Amarelo',
-                        unit: '%',
-                        min: 5,
-                        max: 30,
-                        step: 0.1,
-                        integer: false,
-                      ),
+                      // ConfigCard(
+                      //   id: 19,
+                      //   title: 'Limite de erro RPM - Verde',
+                      //   unit: '%',
+                      //   min: 2,
+                      //   max: 20,
+                      //   step: 0.1,
+                      //   integer: false,
+                      // ),
+                      // ConfigCard(
+                      //   id: 20,
+                      //   title: 'Limite de erro RPM - Amarelo',
+                      //   unit: '%',
+                      //   min: 5,
+                      //   max: 30,
+                      //   step: 0.1,
+                      //   integer: false,
+                      // ),
                       ConfigCard(
                         id: 21,
                         title: 'Compensação de erro',

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../utilities/constants/colors.dart';
 import '../../utilities/constants/sizes.dart';
@@ -9,14 +8,14 @@ import '../card.dart';
 
 setMotorsDialog() {
   JMAlertBox(
-          title: 'Configurar motores',
+          title: 'Configurar motores e monitoramento',
           onPressed: () {},
           dismissible: true,
           insetPadding: 100,
           width: 1200,
-          ok: false,
-          cancel: true,
-          offsetPosition: 120,
+          ok: true,
+          cancel: false,
+          offsetPosition: 25,
           body: const SetMotorsDialog())
       .openJMAlertBox(navigatorKey.currentContext);
 }
@@ -42,7 +41,7 @@ class _SetMotorsDialogState extends State<SetMotorsDialog> {
                 : Column(
                     children: [
                       const Text(
-                        "Braquiária",
+                        "Motor de braquiária",
                         style: TextStyle(
                             fontSize: 20,
                             color: kPrimaryColor,
@@ -142,7 +141,7 @@ class _SetMotorsDialogState extends State<SetMotorsDialog> {
                 : Column(
                     children: [
                       const Text(
-                        "Adubo",
+                        "Motor de adubo",
                         style: TextStyle(
                             fontSize: 20,
                             color: kPrimaryColor,
@@ -227,7 +226,7 @@ class _SetMotorsDialogState extends State<SetMotorsDialog> {
                     ],
                   ),
             const Text(
-              "Semente",
+              "Motor de semente",
               style: TextStyle(
                   fontSize: 20,
                   color: kPrimaryColor,
@@ -308,7 +307,87 @@ class _SetMotorsDialogState extends State<SetMotorsDialog> {
                 ),
               ),
             ),
-            const SizedBox(height: kDefaultPadding * 2),
+            const SizedBox(height: kDefaultPadding / 2),
+            const Text(
+              "Sensor de semente",
+              style: TextStyle(
+                  fontSize: 20,
+                  color: kPrimaryColor,
+                  fontWeight: FontWeight.w300),
+            ),
+            const SizedBox(height: kDefaultPadding / 2),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: kDefaultPadding * 2),
+              child: SizedBox(
+                height: 90,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: machine['numberOfLines'],
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: kDefaultPadding / 4),
+                      child: JMCard(
+                        height: 60,
+                        width: 100,
+                        body: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Column(children: [
+                                const SizedBox(height: kDefaultPadding / 2),
+                                Text(
+                                  "Sensor ${index + 1}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                Transform.scale(
+                                  scale: 1.2,
+                                  child: Switch(
+                                      value: seed['setSensors'][index] == 1
+                                          ? true
+                                          : false,
+                                      activeColor: kSuccessColor,
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          value
+                                              ? seed['setSensors'][index] = 1
+                                              : seed['setSensors'][index] = 0;
+                                        });
+                                      }),
+                                ),
+                              ]),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (seed['setSensors'][index] == 1) {
+                                      seed['setSensors'][index] = 0;
+                                    } else {
+                                      seed['setSensors'][index] = 1;
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 90,
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            // const SizedBox(height: kDefaultPadding * 2),
           ],
         ),
       ),

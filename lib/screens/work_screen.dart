@@ -1,7 +1,7 @@
 import 'package:easytech_electric_blue/screens/sections_layout_screen.dart';
 import 'package:easytech_electric_blue/screens/seed_screen.dart';
 import 'package:easytech_electric_blue/screens/velocity_screen.dart';
-import 'package:easytech_electric_blue/services/timer.dart';
+import 'package:easytech_electric_blue/services/fill_disk_timer.dart';
 import 'package:easytech_electric_blue/widgets/charts/seed_chart.dart';
 import 'package:easytech_electric_blue/widgets/speedometer_v2.dart';
 import 'package:flutter/material.dart';
@@ -349,7 +349,7 @@ class _WorkScreenState extends State<WorkScreen> with TickerProviderStateMixin {
                           children: [
                             SimpleCard(
                               title: 'Área parcial',
-                              text: '1020',
+                              text: '0',
                               textFontSize: 28,
                               unit: 'ha',
                               unitFontSize: 16,

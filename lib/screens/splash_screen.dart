@@ -1,4 +1,5 @@
 import 'package:easytech_electric_blue/screens/work_screen.dart';
+import 'package:easytech_electric_blue/services/main_timer.dart';
 import 'package:easytech_electric_blue/services/geolocation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _init() async {
+    MainTimer().stopTimer();
     await Geolocation.init();
     LockTask.enable();
     Wakelock.enable();
@@ -46,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Permission.bluetoothScan.request();
     await Permission.bluetoothConnect.request();
     Bluetooth().connect();
-
+    MainTimer().startTimer();
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
       PageRouteBuilder(

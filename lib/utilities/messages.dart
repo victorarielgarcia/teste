@@ -7,7 +7,6 @@ import 'global.dart';
 class Messages {
   void sendSettingsRequest() async {
     sendWithQueue = true;
-    Messages().message["antennaAndLiftSensorModule"]!();
     Messages().message["machine"]!();
     Messages().message["seed"]!();
     Messages().message["fertilizer"]!();

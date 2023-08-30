@@ -39,39 +39,43 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlobalLoaderOverlay(
-      child: MaterialApp(
-        title: 'EasyTech Electric',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeDefault().getTheme(),
-        initialRoute: SplashScreen.route,
-        navigatorKey: navigatorKey,
-        routes: {
-          SplashScreen.route: (context) => const SplashScreen(),
-          WorkScreen.route: (context) => const WorkScreen(),
-          MotorScreen.route: (context) => const MotorScreen(),
-          MachineScreen.route: (context) => const MachineScreen(),
-          MachineLayoutScreen.route: (context) => const MachineLayoutScreen(),
-          SeedScreen.route: (context) => const SeedScreen(),
-          FertilizerScreen.route: (context) => const FertilizerScreen(),
-          FertilizerCalibrationScreen.route: (context) =>
-              const FertilizerCalibrationScreen(),
-          FertilizerCalibrationResultScreen.route: (context) =>
-              const FertilizerCalibrationResultScreen(),
-          BrachiariaScreen.route: (context) => const BrachiariaScreen(),
-          BrachiariaCalibrationScreen.route: (context) =>
-              const BrachiariaCalibrationScreen(),
-          BrachiariaCalibrationResultScreen.route: (context) =>
-              const BrachiariaCalibrationResultScreen(),
-          VelocityScreen.route: (context) => const VelocityScreen(),
-          SensorScreen.route: (context) => const SensorScreen(),
-          SupportScreen.route: (context) => const SupportScreen(),
-          AdvancedScreen.route: (context) => const AdvancedScreen(),
-          ModuleAddressingScreen.route: (context) =>
-              const ModuleAddressingScreen(),
-          MotorAddressingScreen.route: (context) =>
-              const MotorAddressingScreen(),
-          SectionsLayoutScreen.route: (context) => const SectionsLayoutScreen(),
-        },
+      child: Listener(
+        onPointerUp: (_) => mainTimer['lackCount'] = 0,
+        child: MaterialApp(
+          title: 'EasyTech Electric',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeDefault().getTheme(),
+          initialRoute: SplashScreen.route,
+          navigatorKey: navigatorKey,
+          routes: {
+            SplashScreen.route: (context) => const SplashScreen(),
+            WorkScreen.route: (context) => const WorkScreen(),
+            MotorScreen.route: (context) => const MotorScreen(),
+            MachineScreen.route: (context) => const MachineScreen(),
+            MachineLayoutScreen.route: (context) => const MachineLayoutScreen(),
+            SeedScreen.route: (context) => const SeedScreen(),
+            FertilizerScreen.route: (context) => const FertilizerScreen(),
+            FertilizerCalibrationScreen.route: (context) =>
+                const FertilizerCalibrationScreen(),
+            FertilizerCalibrationResultScreen.route: (context) =>
+                const FertilizerCalibrationResultScreen(),
+            BrachiariaScreen.route: (context) => const BrachiariaScreen(),
+            BrachiariaCalibrationScreen.route: (context) =>
+                const BrachiariaCalibrationScreen(),
+            BrachiariaCalibrationResultScreen.route: (context) =>
+                const BrachiariaCalibrationResultScreen(),
+            VelocityScreen.route: (context) => const VelocityScreen(),
+            SensorScreen.route: (context) => const SensorScreen(),
+            SupportScreen.route: (context) => const SupportScreen(),
+            AdvancedScreen.route: (context) => const AdvancedScreen(),
+            ModuleAddressingScreen.route: (context) =>
+                const ModuleAddressingScreen(),
+            MotorAddressingScreen.route: (context) =>
+                const MotorAddressingScreen(),
+            SectionsLayoutScreen.route: (context) =>
+                const SectionsLayoutScreen(),
+          },
+        ),
       ),
     );
   }
