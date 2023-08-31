@@ -849,6 +849,9 @@ Map<String, dynamic> mainTimer = {
   'lackCount': 0,
   'manutenceCount': 0,
   'enableMonitoringCount': 0,
+  'brachiariaErrorCount': 0,
+  'fertilizerErrorCount': 0,
+  'seedErrorCount': 0,
 };
 
 Map<String, dynamic> acceptedDialog = {

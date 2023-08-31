@@ -92,13 +92,12 @@ class _MotorScreenState extends State<MotorScreen> {
                                             rpmTarget) *
                                         100;
 
-                                if (percentageDifference >= 5 &&
-                                    percentageDifference < 10) {
+                                if (percentageDifference < 5) {
                                   error = 0;
-                                } else if (percentageDifference >= 10 &&
-                                    percentageDifference < 15) {
+                                } else if (percentageDifference >= 5 &&
+                                    percentageDifference < 10) {
                                   error = 1;
-                                } else if (percentageDifference >= 15) {
+                                } else if (percentageDifference >= 10) {
                                   error = 2;
                                 }
                               }
@@ -152,16 +151,14 @@ class _MotorScreenState extends State<MotorScreen> {
                                   ((rpmCurrent - rpmTarget).abs() / rpmTarget) *
                                       100;
 
-                              if (percentageDifference >= 3 &&
-                                  percentageDifference < 5) {
+                              if (percentageDifference < 5) {
                                 error = 0;
                               } else if (percentageDifference >= 5 &&
-                                  percentageDifference < 8) {
+                                  percentageDifference < 10) {
                                 error = 1;
-                              } else if (percentageDifference >= 8) {
+                              } else if (percentageDifference >= 10) {
                                 error = 2;
                               }
-
                               // if (percentageDifference >= 5 &&
                               //     percentageDifference < 10) {
                               //   error = 0;
@@ -176,7 +173,7 @@ class _MotorScreenState extends State<MotorScreen> {
                             //   error = 3;
                             // }
                             double speed = Speed.getCurrentVelocity();
-                            
+
                             if (speed == 0 && rpmCurrent < 1) {
                               error = -1;
                             }
@@ -216,13 +213,12 @@ class _MotorScreenState extends State<MotorScreen> {
                       } else {
                         double percentageDifference =
                             ((rpmCurrent - rpmTarget).abs() / rpmTarget) * 100;
-                        if (percentageDifference >= 5 &&
-                            percentageDifference < 10) {
+                        if (percentageDifference < 5) {
                           error = 0;
-                        } else if (percentageDifference >= 10 &&
-                            percentageDifference < 15) {
+                        } else if (percentageDifference >= 5 &&
+                            percentageDifference < 10) {
                           error = 1;
-                        } else if (percentageDifference >= 15) {
+                        } else if (percentageDifference >= 10) {
                           error = 2;
                         }
                       }

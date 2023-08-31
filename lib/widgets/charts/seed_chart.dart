@@ -76,6 +76,7 @@ class SeedChartState extends State<SeedChart> {
             (y > 100 + seed["secondErrorLimit"])) &&
         status['isPlanting']) {
       print("SENSOR FORA!!!!!");
+      
     }
     return BarChartGroupData(
       x: x,

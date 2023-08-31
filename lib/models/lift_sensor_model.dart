@@ -45,10 +45,12 @@ class LiftSensorManager extends ChangeNotifier {
     } else if (speed > 0 && !machineLifted) {
       _state.color = kWarningColor;
       status['isPlanting'] = false;
+      acceptedDialog['error'] = true;
     } else {
       _state.color = kDisabledColor;
       status['isPlanting'] = false;
       status['showMonitoring'] = false;
+      acceptedDialog['error'] = true;
     }
     notifyListeners();
   }
