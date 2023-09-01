@@ -236,68 +236,79 @@ class SeedChartState extends State<SeedChart> {
           case 5:
             return makeGroupData(
                 5,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 6:
             return makeGroupData(
                 6,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 7:
             return makeGroupData(
                 7,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 8:
             return makeGroupData(
                 8,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 9:
             return makeGroupData(
                 9,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 10:
             return makeGroupData(
                 10,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 11:
             return makeGroupData(
                 11,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (12 - 4)] == 1
+                    ? calculatePercentage(seedState.rate[i + (12 - 4)])
                     : 0);
           case 12:
             return makeGroupData(
                 12,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (24 - 4 - 7)] == 1
+                    ? calculatePercentage(seedState.rate[i + (24 - 4 - 7)])
                     : 0);
           case 13:
             return makeGroupData(
                 13,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (24 - 4 - 7)] == 1
+                    ? calculatePercentage(seedState.rate[i + (24 - 4 - 7)])
                     : 0);
           case 14:
             return makeGroupData(
                 14,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (24 - 4 - 7)] == 1
+                    ? calculatePercentage(seedState.rate[i + (24 - 4 - 7)])
                     : 0);
           case 15:
             return makeGroupData(
                 15,
-                ((i + 1) < seedState.rate.length) && seed['setSensors'][i] == 1
-                    ? calculatePercentage(seedState.rate[i])
+                ((i + 1) < seedState.rate.length) &&
+                        seed['setSensors'][i + (24 - 4 - 7)] == 1
+                    ? calculatePercentage(seedState.rate[i + (24 - 4 - 7)])
                     : 0);
           case 16:
             return makeGroupData(

@@ -37,6 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
     final prefs = await SharedPreferences.getInstance();
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    // isFirstTime = true;
 
     if (isFirstTime) {
       await StorageManager().save();

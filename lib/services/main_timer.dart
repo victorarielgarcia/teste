@@ -39,6 +39,9 @@ class MainTimer {
     // List<double> doubleList =
     //     (seed['rate'] as List<dynamic>).map((e) => e as double).toList();
     // seedManager.updateRate(doubleList);
+
+    
+
 // Um mapa para manter contagem de erros para cada motor
     Map<int, int> seedErrorCounts = {};
     Map<int, int> fertilizerErrorCounts = {};
@@ -77,7 +80,8 @@ class MainTimer {
           }
 
           // Verifica os alertas
-          if (status['isPlanting'] && !machine['stoppedMotors'] && connected) {
+          // if (false) {
+            if (status['isPlanting'] && !machine['stoppedMotors'] && connected) {
             // Inicia o monitoramento das linhas após 2 segundos
             if (mainTimer['enableMonitoringCount'] == 2) {
               // Plantadeira devia estar plantando o motor parou, após 5 segundos dar pop-up erro
