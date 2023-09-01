@@ -21,32 +21,21 @@ class TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            motor['rpm'][44] = 10.0;
-            motorManager.updateRPM(
-              motor['rpm'],
-              motor['targetRPMBrachiaria'],
-              motor['targetRPMFertilizer'],
-              motor['targetRPMSeed'],
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.only(top: kDefaultPadding),
-                    child: SizedBox(
-                        height: 45,
-                        width: 185,
-                        child: Image.asset('assets/images/logo_jumil.png'))),
-                const TopTab(),
-                const TopIcons(),
-              ],
-            ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                  padding: const EdgeInsets.only(top: kDefaultPadding),
+                  child: SizedBox(
+                      height: 45,
+                      width: 185,
+                      child: Image.asset('assets/images/logo_jumil.png'))),
+              const TopTab(),
+              const TopIcons(),
+            ],
           ),
         ),
       ],
@@ -181,12 +170,14 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       LockTask.disable();
+      status['minimized'] = true;
       AppLogger.log('TIMER PAUSED');
       // await Future.delayed(const Duration(seconds: 1));
 
       timer!.cancel();
     } else {
       LockTask.enable();
+      status['minimized'] = false;
       Navigator.pushNamedAndRemoveUntil(
           context, SplashScreen.route, (route) => false);
     }

@@ -6,7 +6,12 @@ import '../alert_box.dart';
 bluetoothLoseConnectionDialog() {
   JMAlertBox(
           title: 'Perda de conexão',
-          onPressed: () {},
+          onPressed: () {
+            acceptedDialog['bluetoothError'] = true;
+          },
+          onCancel: () {
+            acceptedDialog['bluetoothError'] = true;
+          },
           cancel: false,
           ok: true,
           insetPadding: 0,
@@ -29,8 +34,15 @@ class _BluetoothLoseConnectionDialogState
     extends State<BluetoothLoseConnectionDialog> {
   @override
   void initState() {
+    acceptedDialog['bluetoothError'] = false;
     soundManager.playSound('error');
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    acceptedDialog['bluetoothError'] = true;
+    super.dispose();
   }
 
   @override

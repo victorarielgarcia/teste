@@ -14,11 +14,12 @@ class SpeedometerV2 extends StatefulWidget {
 }
 
 class _SpeedometerV2State extends State<SpeedometerV2> {
+  double speed = 0.0;
   final nmeaState = nmeaManager.state;
   void nmeaListener() {
     if (mounted) {
       setState(() {
-        speed = nmeaState.satelliteSpeed;
+        speed = Speed.getCurrentVelocity();
       });
     }
   }
@@ -27,15 +28,15 @@ class _SpeedometerV2State extends State<SpeedometerV2> {
   void antennaListener() {
     if (mounted) {
       setState(() {
-        speed = antennaState.speed;
+        speed = Speed.getCurrentVelocity();
       });
     }
   }
 
-  double speed = 0.0;
-
   @override
   void initState() {
+    antennaManager.addListener(antennaListener);
+    nmeaManager.addListener(nmeaListener);
     speed = Speed.getCurrentVelocity();
     super.initState();
   }

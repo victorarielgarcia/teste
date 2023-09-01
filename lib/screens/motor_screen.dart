@@ -72,12 +72,11 @@ class _MotorScreenState extends State<MotorScreen> {
                             ),
                           ),
                           const SizedBox(height: kDefaultPadding / 2),
-                          GridView.count(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            childAspectRatio: 1.5,
-                            crossAxisCount: 12,
-                            mainAxisSpacing: kDefaultPadding / 1.5,
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            runAlignment: WrapAlignment.center,
+                            spacing: kDefaultPadding / 1.5,
+                            runSpacing: kDefaultPadding / 1.5,
                             children: List.generate(brachiaria['layout'].length,
                                 (index) {
                               double rpmCurrent = motorState.rpm[
@@ -109,11 +108,15 @@ class _MotorScreenState extends State<MotorScreen> {
                               if (speed == 0 && rpmCurrent < 1) {
                                 error = -1;
                               }
-                              return MotorInfoCard(
-                                name: 'Braquiária',
-                                index: index,
-                                value: rpmCurrent,
-                                error: error,
+                              return SizedBox(
+                                width: 90,
+                                height: 70,
+                                child: MotorInfoCard(
+                                  name: 'Braquiária',
+                                  index: index,
+                                  value: rpmCurrent,
+                                  error: error,
+                                ),
                               );
                             }),
                           ),
@@ -132,12 +135,11 @@ class _MotorScreenState extends State<MotorScreen> {
                           ),
                         ),
                         const SizedBox(height: kDefaultPadding / 2),
-                        GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          childAspectRatio: 1.5,
-                          crossAxisCount: 12,
-                          mainAxisSpacing: kDefaultPadding / 1.5,
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          runAlignment: WrapAlignment.center,
+                          spacing: kDefaultPadding / 1.5,
+                          runSpacing: kDefaultPadding / 1.5,
                           children: List.generate(fertilizer['layout'].length,
                               (index) {
                             double rpmCurrent = motorState
@@ -177,11 +179,15 @@ class _MotorScreenState extends State<MotorScreen> {
                             if (speed == 0 && rpmCurrent < 1) {
                               error = -1;
                             }
-                            return MotorInfoCard(
-                              name: 'Adubo',
-                              index: index,
-                              value: rpmCurrent,
-                              error: error,
+                            return SizedBox(
+                              width: 90,
+                              height: 70,
+                              child: MotorInfoCard(
+                                name: 'Adubo',
+                                index: index,
+                                value: rpmCurrent,
+                                error: error,
+                              ),
                             );
                           }),
                         ),
@@ -197,12 +203,11 @@ class _MotorScreenState extends State<MotorScreen> {
                     ),
                   ),
                   const SizedBox(height: kDefaultPadding / 2),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 1.5,
-                    crossAxisCount: 12,
-                    mainAxisSpacing: kDefaultPadding / 1.5,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    runAlignment: WrapAlignment.center,
+                    spacing: kDefaultPadding / 1.5,
+                    runSpacing: kDefaultPadding / 1.5,
                     children: List.generate(machine['numberOfLines'], (index) {
                       double rpmCurrent =
                           motorState.rpm[seed['addressedLayout'][index] - 1];
@@ -229,11 +234,15 @@ class _MotorScreenState extends State<MotorScreen> {
                       if (speed == 0 && rpmCurrent < 1) {
                         error = -1;
                       }
-                      return MotorInfoCard(
-                        name: 'Semente',
-                        index: index,
-                        value: rpmCurrent,
-                        error: error,
+                      return SizedBox(
+                        width: 90,
+                        height: 70,
+                        child: MotorInfoCard(
+                          name: 'Semente',
+                          index: index,
+                          value: rpmCurrent,
+                          error: error,
+                        ),
                       );
                     }),
                   ),

@@ -371,61 +371,45 @@ class Messages {
           1);
     },
     'setMotors': () async {
-      Bluetooth().send(
-          0,
-          0,
-          0,
-          Uint8List.fromList([
-            binaryStringToInt(
-                '${brachiaria['setMotors'][0]}${brachiaria['setMotors'][1]}${brachiaria['setMotors'][2]}${fertilizer['setMotors'][0]}${fertilizer['setMotors'][1]}${fertilizer['setMotors'][2]}${fertilizer['setMotors'][3]}${fertilizer['setMotors'][4]}'),
-            binaryStringToInt(
-                '${fertilizer['setMotors'][5]}${seed['setMotors'][0]}${seed['setMotors'][1]}${seed['setMotors'][2]}${seed['setMotors'][3]}${seed['setMotors'][4]}${seed['setMotors'][5]}${seed['setMotors'][6]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][7]}${seed['setMotors'][8]}${seed['setMotors'][9]}${seed['setMotors'][10]}${seed['setMotors'][11]}${brachiaria['setMotors'][3]}${brachiaria['setMotors'][4]}${brachiaria['setMotors'][5]}'),
-            binaryStringToInt(
-                '${fertilizer['setMotors'][6]}${fertilizer['setMotors'][7]}${fertilizer['setMotors'][8]}${fertilizer['setMotors'][9]}${fertilizer['setMotors'][10]}${fertilizer['setMotors'][11]}00'),
-            binaryStringToInt(
-                '${seed['setMotors'][12]}${seed['setMotors'][13]}${seed['setMotors'][14]}${seed['setMotors'][15]}${seed['setMotors'][16]}${seed['setMotors'][17]}${seed['setMotors'][18]}${seed['setMotors'][19]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][20]}${seed['setMotors'][21]}${seed['setMotors'][22]}${seed['setMotors'][23]}${brachiaria['setMotors'][6]}${brachiaria['setMotors'][7]}${brachiaria['setMotors'][8]}${fertilizer['setMotors'][12]}'),
-            binaryStringToInt(
-                '${fertilizer['setMotors'][13]}${fertilizer['setMotors'][14]}${fertilizer['setMotors'][15]}${fertilizer['setMotors'][16]}${fertilizer['setMotors'][17]}${seed['setMotors'][24]}${seed['setMotors'][25]}${seed['setMotors'][26]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][27]}${seed['setMotors'][28]}${seed['setMotors'][29]}${seed['setMotors'][30]}${seed['setMotors'][31]}${seed['setMotors'][32]}${seed['setMotors'][33]}${seed['setMotors'][34]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][35]}${brachiaria['setMotors'][9]}${brachiaria['setMotors'][10]}${brachiaria['setMotors'][11]}${fertilizer['setMotors'][18]}${fertilizer['setMotors'][19]}${fertilizer['setMotors'][20]}${fertilizer['setMotors'][21]}'),
-            binaryStringToInt(
-                '${fertilizer['setMotors'][22]}${fertilizer['setMotors'][23]}${seed['setMotors'][36]}${seed['setMotors'][37]}${seed['setMotors'][38]}${seed['setMotors'][39]}${seed['setMotors'][40]}${seed['setMotors'][41]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][42]}${seed['setMotors'][43]}${seed['setMotors'][44]}${seed['setMotors'][45]}${seed['setMotors'][46]}${seed['setMotors'][47]}${brachiaria['setMotors'][12]}${brachiaria['setMotors'][13]}'),
-            binaryStringToInt(
-                '${brachiaria['setMotors'][14]}${fertilizer['setMotors'][24]}${fertilizer['setMotors'][25]}${fertilizer['setMotors'][26]}${fertilizer['setMotors'][27]}${fertilizer['setMotors'][28]}${fertilizer['setMotors'][29]}${seed['setMotors'][48]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][49]}${seed['setMotors'][50]}${seed['setMotors'][51]}${seed['setMotors'][52]}${seed['setMotors'][53]}${seed['setMotors'][54]}${seed['setMotors'][55]}${seed['setMotors'][56]}'),
-            binaryStringToInt(
-                '${seed['setMotors'][57]}${seed['setMotors'][58]}${seed['setMotors'][59]}00000'),
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-          ]),
-          1);
+      List<int> setMotorsMessage = List.filled(8 * 34, 0);
+
+      for (var i = 0; i < brachiaria['setMotors'].length; i++) {
+        int index = 0;
+
+        brachiaria['addressedLayout'][i] > 30
+            ? index = brachiaria['addressedLayout'][i] + 2
+            : index = brachiaria['addressedLayout'][i];
+        setMotorsMessage[index - 1] = brachiaria['setMotors'][i];
+      }
+      for (var i = 0; i < fertilizer['setMotors'].length; i++) {
+        int index = 0;
+
+        fertilizer['addressedLayout'][i] > 30
+            ? index = fertilizer['addressedLayout'][i] + 2
+            : index = fertilizer['addressedLayout'][i];
+
+        setMotorsMessage[index - 1] = fertilizer['setMotors'][i];
+      }
+      for (var i = 0; i < seed['setMotors'].length; i++) {
+        int index = 0;
+
+        seed['addressedLayout'][i] > 30
+            ? index = seed['addressedLayout'][i] + 2
+            : index = seed['addressedLayout'][i];
+        setMotorsMessage[index - 1] = seed['setMotors'][i];
+      }
+
+      List<int> setMotorsBinary = [];
+      // Agrupa a cada 8 bits e converte para um número inteiro
+      for (int i = 0; i < setMotorsMessage.length; i += 8) {
+        if (i + 8 <= setMotorsMessage.length) {
+          String binaryString = setMotorsMessage.sublist(i, i + 8).join();
+          int converted = binaryStringToInt(binaryString);
+          setMotorsBinary.add(converted);
+        }
+      }
+
+      Bluetooth().send(0, 0, 0, Uint8List.fromList(setMotorsBinary), 1);
     },
     'stopMotors': () async {
       Bluetooth().send(

@@ -48,6 +48,7 @@ class _StopMotorsDialogState extends State<StopMotorsDialog> {
                     onPressed: () {
                       machine['stoppedMotors'] = false;
                       Messages().message["startMotors"]!();
+                     
                       Navigator.of(context).pop();
                     }))),
         const SizedBox(height: kDefaultPadding),

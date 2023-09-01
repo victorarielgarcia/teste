@@ -74,9 +74,10 @@ class SeedChartState extends State<SeedChart> {
   }) {
     if (((y < 100 - seed["secondErrorLimit"]) ||
             (y > 100 + seed["secondErrorLimit"])) &&
-        status['isPlanting']) {
-      print("SENSOR FORA!!!!!");
-      
+        status['isPlanting'] &&
+        seed['setSensors'][x - 1] == 1 &&
+        !machine['stoppedMotors']) {
+      soundManager.playSound('beep');
     }
     return BarChartGroupData(
       x: x,

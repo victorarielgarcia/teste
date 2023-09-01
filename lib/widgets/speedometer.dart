@@ -14,6 +14,7 @@ class Speedometer extends StatefulWidget {
 }
 
 class _SpeedometerState extends State<Speedometer> {
+  double speed = 0.0;
   final nmeaState = nmeaManager.state;
   void nmeaListener() {
     if (mounted) {
@@ -32,11 +33,12 @@ class _SpeedometerState extends State<Speedometer> {
     }
   }
 
-  double speed = 0.0;
-
   @override
   void initState() {
-    speed = Speed.getCurrentVelocity();
+    setState(() {
+      speed = Speed.getCurrentVelocity();
+    });
+
     super.initState();
   }
 

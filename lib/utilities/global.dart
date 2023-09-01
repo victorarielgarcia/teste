@@ -547,14 +547,14 @@ Map<String, dynamic> fertilizer = {
   'errorCompensation': 0,
   'layout': <int>[],
   'setMotors': <int>[
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     0,
     0,
     0,
@@ -838,7 +838,8 @@ Map<String, dynamic> battery = {
 
 Map<String, dynamic> status = {
   'isPlanting': false,
-  'showMonitoring': true,
+  'showMonitoring': false,
+  'minimized': false,
 };
 
 Map<String, dynamic> log = {
@@ -849,11 +850,12 @@ Map<String, dynamic> mainTimer = {
   'lackCount': 0,
   'manutenceCount': 0,
   'enableMonitoringCount': 0,
-  'brachiariaErrorCount': 0,
-  'fertilizerErrorCount': 0,
   'seedErrorCount': 0,
 };
 
 Map<String, dynamic> acceptedDialog = {
-  'error': true,
+  'seedError': true,
+  'fertilizerError': true,
+  'brachiariaError': true,
+  'bluetoothError': true,
 };

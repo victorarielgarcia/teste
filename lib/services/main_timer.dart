@@ -16,205 +16,185 @@ class MainTimer {
 
   void startTimer() {
     // SIMULAÇÂO
-    motor['rpm'][0] = 10.0;
-    motor['rpm'][1] = 10.0;
-    motor['rpm'][2] = 10.0;
-    motor['rpm'][21] = 10.0;
-    motor['rpm'][22] = 10.0;
-    motor['rpm'][23] = 6.0;
-    motor['rpm'][42] = 5.0;
-    motor['rpm'][43] = 10.0;
-    motor['rpm'][44] = 8.0;
+    // motor['rpm'][0] = 10.0;
+    // motor['rpm'][1] = 10.0;
+    // motor['rpm'][2] = 10.0;
+    // motor['rpm'][21] = 10.0;
+    // motor['rpm'][22] = 10.0;
+    // motor['rpm'][23] = 6.0;
+    // motor['rpm'][42] = 5.0;
+    // motor['rpm'][43] = 10.0;
+    // motor['rpm'][44] = 8.0;
 
-    motor['rpm'][6] = 8.0;
-    motor['rpm'][58] = 10.0;
+    // // motor['rpm'][6] = 8.0;
+    // // motor['rpm'][58] = 10.0;
 
-    motor['targetRPMBrachiaria'] = 10.0;
-    motorManager.updateRPM(
-      motor['rpm'],
-      motor['targetRPMBrachiaria'],
-      motor['targetRPMFertilizer'],
-      motor['targetRPMSeed'],
-    );
+    // motor['targetRPMBrachiaria'] = 10.0;
+    // motorManager.updateRPM(
+    //   motor['rpm'],
+    //   motor['targetRPMBrachiaria'],
+    //   motor['targetRPMFertilizer'],
+    //   motor['targetRPMSeed'],
+    // );
     // List<double> doubleList =
     //     (seed['rate'] as List<dynamic>).map((e) => e as double).toList();
     // seedManager.updateRate(doubleList);
+// Um mapa para manter contagem de erros para cada motor
+    Map<int, int> seedErrorCounts = {};
+    Map<int, int> fertilizerErrorCounts = {};
+    Map<int, int> brachiariaErrorCounts = {};
 
+    // Listas para armazenar os motores com erro
+    List<int> seedMotorsWithError = [];
+    List<int> fertilizerMotorsWithError = [];
+    List<int> brachiariaMotorsWithError = [];
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer timer) {
-        // Tocar som de "carência" após dois minutos
-        if (mainTimer['lackCount'] == 120) {
-          soundManager.playSound('lack');
-          mainTimer['lackCount'] = 0;
-        }
-
-        // Envia mensagem de manutenção para o módulo Bluetooth
-        if (mainTimer['manutenceCount'] == 3) {
-          if (!sendWithQueue && connected) {
-            if (sendManutenceMessage) {
-              Messages().message["manutence"]!();
-            }
+        if (!status['minimized']) {
+          // Tocar som de "carência" após dois minutos
+          if (mainTimer['lackCount'] == 120) {
+            soundManager.playSound('lack');
+            mainTimer['lackCount'] = 0;
           }
-          checkConnection = false;
-          sendManutenceMessage = true;
 
-          // Verifica conexão com Bluetooth caso esteja desconectado
-          if (!connected) {
-            Bluetooth().connect();
+          // Envia mensagem de manutenção para o módulo Bluetooth
+          if (mainTimer['manutenceCount'] == 3) {
+            if (!sendWithQueue && connected) {
+              if (sendManutenceMessage) {
+                Messages().message["manutence"]!();
+              }
+            }
+            checkConnection = false;
+            sendManutenceMessage = true;
+
+            // Verifica conexão com Bluetooth caso esteja desconectado
+            if (!connected) {
+              Bluetooth().connect();
+            }
+            bluetoothManager.changeConnectionState(connected);
+            mainTimer['manutenceCount'] = 0;
           }
-          bluetoothManager.changeConnectionState(connected);
-          mainTimer['manutenceCount'] = 0;
-        }
 
-        // Verifica os alertas
-        if (status['isPlanting']) {
-          // Inicia o monitoramento das linhas após 3 segundos
-          if (mainTimer['enableMonitoringCount'] == 3) {
-            // Plantadeira devia estar plantando o motor parou, após 5 segundos dar pop-up erro
-            status['showMonitoring'] = true;
-            // Verifica se os motores de adubo estão atingindo o RPM alvo,
-            // se estiver 10% a mais ou a menos ele é considerando um motor com erro
-            Set seedMotorsWithError = {};
-            Set seedMotorsCheckError = {};
-            for (var i = 0; i < machine['numberOfLines']; i++) {
-              double percentageDifference = ((motor['rpm']
-                                  [seed['addressedLayout'][i] - 1] -
-                              motor['targetRPMSeed'])
-                          .abs() /
-                      motor['targetRPMSeed']) *
-                  100;
-              if (percentageDifference >= 10 && acceptedDialog['error']) {
-                seedMotorsCheckError.add(i);
-              }
-            }
-            if (seedMotorsCheckError.isNotEmpty) {
-              if (mainTimer['seedErrorCount'] == 5) {
-                for (int motorIndex in seedMotorsCheckError) {
-                  double percentageDifference =
-                      ((motor['rpm'][seed['addressedLayout'][motorIndex] - 1] -
-                                      motor['targetRPMSeed'])
-                                  .abs() /
-                              motor['targetRPMSeed']) *
-                          100;
-                  if (percentageDifference >= 10) {
-                    seedMotorsWithError.add(motorIndex + 1);
+          // Verifica os alertas
+          if (status['isPlanting'] && !machine['stoppedMotors'] && connected) {
+            // Inicia o monitoramento das linhas após 2 segundos
+            if (mainTimer['enableMonitoringCount'] == 2) {
+              // Plantadeira devia estar plantando o motor parou, após 5 segundos dar pop-up erro
+              status['showMonitoring'] = true;
+
+              // Verificação para motores de semente
+              if (acceptedDialog['seedError']) {
+                for (var i = 0; i < machine['numberOfLines']; i++) {
+                  if (seed['setMotors'][i] == 1) {
+                    double percentageDifference = ((motor['rpm']
+                                        [seed['addressedLayout'][i] - 1] -
+                                    motor['targetRPMSeed'])
+                                .abs() /
+                            motor['targetRPMSeed']) *
+                        100;
+
+                    if (percentageDifference >= 10) {
+                      seedErrorCounts[i] = (seedErrorCounts[i] ?? 0) + 1;
+
+                      if (seedErrorCounts[i]! >= 7) {
+                        if (!seedMotorsWithError.contains(i + 1)) {
+                          seedMotorsWithError.add(i + 1);
+                        }
+                        seedErrorCounts[i] = 0; // Reset do contador
+                      }
+                    } else {
+                      seedErrorCounts[i] = 0;
+                    }
                   }
                 }
-                if (acceptedDialog['error'] &&
-                    status['isPlanting'] &&
-                    seedMotorsWithError.isNotEmpty) {
-                  errorDialog('semente', seedMotorsWithError.toList());
-                  seedMotorsWithError.clear();
-                  seedMotorsCheckError.clear();
-                }
-              } else {
-                mainTimer['seedErrorCount']++;
               }
-            } else {
-              mainTimer['seedErrorCount'] = 0;
-            }
 
-            // Verifica se os motores de adubo estão atingindo o RPM alvo,
-            // se estiver 10% a mais ou a menos ele é considerando um motor com erro
-            Set fertilizerMotorsWithError = {};
-            Set fertilizerMotorsCheckError = {};
-            for (var i = 0; i < fertilizer['layout'].length; i++) {
-              double percentageDifference = ((motor['rpm']
-                                  [fertilizer['addressedLayout'][i] - 1] -
-                              motor['targetRPMFertilizer'])
-                          .abs() /
-                      motor['targetRPMFertilizer']) *
-                  100;
-              if (percentageDifference >= 10 && acceptedDialog['error']) {
-                fertilizerMotorsCheckError.add(i);
-              }
-            }
-            if (fertilizerMotorsCheckError.isNotEmpty) {
-              if (mainTimer['fertilizerErrorCount'] == 5) {
-                for (int motorIndex in fertilizerMotorsCheckError) {
-                  double percentageDifference =
-                      ((motor['rpm'][fertilizer['addressedLayout'][motorIndex] -
-                                          1] -
-                                      motor['targetRPMFertilizer'])
-                                  .abs() /
-                              motor['targetRPMFertilizer']) *
-                          100;
-                  if (percentageDifference >= 10) {
-                    fertilizerMotorsWithError.add(motorIndex + 1);
+              // Verificação para motores de adubo
+              if (acceptedDialog['fertilizerError']) {
+                for (var i = 0; i < fertilizer['layout'].length; i++) {
+                  if (fertilizer['setMotors'][i] == 1) {
+                    double percentageDifference = ((motor['rpm']
+                                        [fertilizer['addressedLayout'][i] - 1] -
+                                    motor['targetRPMFertilizer'])
+                                .abs() /
+                            motor['targetRPMFertilizer']) *
+                        100;
+
+                    if (percentageDifference >= 10) {
+                      fertilizerErrorCounts[i] =
+                          (fertilizerErrorCounts[i] ?? 0) + 1;
+
+                      if (fertilizerErrorCounts[i]! >= 7) {
+                        fertilizerMotorsWithError.add(i + 1);
+                        fertilizerErrorCounts[i] = 0; // Reset do contador
+                      }
+                    } else {
+                      fertilizerErrorCounts[i] = 0;
+                    }
                   }
                 }
-                if (acceptedDialog['error'] &&
-                    status['isPlanting'] &&
-                    fertilizerMotorsWithError.isNotEmpty) {
-                  errorDialog('adubo', fertilizerMotorsWithError.toList());
-                  fertilizerMotorsWithError.clear();
-                  fertilizerMotorsCheckError.clear();
-                }
-              } else {
-                mainTimer['fertilizerErrorCount']++;
               }
-            } else {
-              mainTimer['fertilizerErrorCount'] = 0;
-            }
+              // Verificação para motores de brachiaria
+              if (acceptedDialog['brachiariaError']) {
+                for (var i = 0; i < brachiaria['layout'].length; i++) {
+                  if (brachiaria['setMotors'][i] == 1) {
+                    double percentageDifference = ((motor['rpm']
+                                        [brachiaria['addressedLayout'][i] - 1] -
+                                    motor['targetRPMBrachiaria'])
+                                .abs() /
+                            motor['targetRPMBrachiaria']) *
+                        100;
 
-            // Verifica se os motores da brachiaria estão atingindo o RPM alvo,
-            // se estiver 10% a mais ou a menos ele é considerando um motor com erro
-            Set brachiariaMotorsWithError = {};
-            Set brachiariaMotorsCheckError = {};
-            for (var i = 0; i < brachiaria['layout'].length; i++) {
-              double percentageDifference = ((motor['rpm']
-                                  [brachiaria['addressedLayout'][i] - 1] -
-                              motor['targetRPMBrachiaria'])
-                          .abs() /
-                      motor['targetRPMBrachiaria']) *
-                  100;
-              if (percentageDifference >= 10 && acceptedDialog['error']) {
-                brachiariaMotorsCheckError.add(i);
-              }
-            }
+                    if (percentageDifference >= 10) {
+                      brachiariaErrorCounts[i] =
+                          (brachiariaErrorCounts[i] ?? 0) + 1;
 
-            if (brachiariaMotorsCheckError.isNotEmpty) {
-              if (mainTimer['brachiariaErrorCount'] == 5) {
-                for (int motorIndex in brachiariaMotorsCheckError) {
-                  double percentageDifference =
-                      ((motor['rpm'][brachiaria['addressedLayout'][motorIndex] -
-                                          1] -
-                                      motor['targetRPMBrachiaria'])
-                                  .abs() /
-                              motor['targetRPMBrachiaria']) *
-                          100;
-                  if (percentageDifference >= 10) {
-                    brachiariaMotorsWithError.add(motorIndex + 1);
+                      if (brachiariaErrorCounts[i]! >= 7) {
+                        brachiariaMotorsWithError.add(i + 1);
+                        brachiariaErrorCounts[i] = 0; // Reset do contador
+                      }
+                    } else {
+                      brachiariaErrorCounts[i] = 0;
+                    }
                   }
                 }
-                if (acceptedDialog['error'] &&
-                    status['isPlanting'] &&
-                    brachiariaMotorsWithError.isNotEmpty) {
-                  errorDialog('braquiária', brachiariaMotorsWithError.toList());
-                  brachiariaMotorsWithError.clear();
-                  brachiariaMotorsCheckError.clear();
-                }
-              } else {
-                mainTimer['brachiariaErrorCount']++;
               }
+
+              if (seedMotorsWithError.isNotEmpty &&
+                  acceptedDialog['seedError']) {
+                errorDialog(1, seedMotorsWithError);
+                seedMotorsWithError = [];
+                seedErrorCounts = {};
+              }
+              if (fertilizerMotorsWithError.isNotEmpty &&
+                  acceptedDialog['fertilizerError']) {
+                errorDialog(2, fertilizerMotorsWithError);
+                fertilizerMotorsWithError = [];
+                fertilizerErrorCounts = {};
+              }
+              if (brachiariaMotorsWithError.isNotEmpty &&
+                  acceptedDialog['brachiariaError']) {
+                errorDialog(3, brachiariaMotorsWithError);
+                brachiariaMotorsWithError = [];
+                brachiariaErrorCounts = {};
+              }
+
+              //
             } else {
-              mainTimer['brachiariaErrorCount'] = 0;
+              mainTimer['enableMonitoringCount']++;
             }
+            mainTimer['lackCount']++;
           } else {
-            mainTimer['enableMonitoringCount']++;
+            mainTimer['lackCount'] = 0;
+            mainTimer['enableMonitoringCount'] = 0;
+            mainTimer['brachiariaErrorCount'] = 0;
+            status['showMonitoring'] = false;
           }
-          mainTimer['lackCount']++;
-        } else {
-          mainTimer['lackCount'] = 0;
-          mainTimer['manutenceCount'] = 0;
-          mainTimer['enableMonitoringCount'] = 0;
-          mainTimer['brachiariaErrorCount'] = 0;
-          status['showMonitoring'] = false;
+          // Incrementa contadores
+          mainTimer['manutenceCount']++;
+          print("MAIN TIMER: $mainTimer $seedErrorCounts");
         }
-        // Incrementa contadores
-        mainTimer['manutenceCount']++;
-        print("MAIN TIMER: $mainTimer");
       },
     );
   }

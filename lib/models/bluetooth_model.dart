@@ -13,7 +13,7 @@ class BluetoothManager extends ChangeNotifier {
   BluetoothModel get state => _state;
 
   void changeConnectionState(bool connected) {
-    if (_state.connected && !connected) {
+    if ((_state.connected && !connected) && acceptedDialog['bluetoothError']) {
       bluetoothLoseConnectionDialog();
       seed['rate'] = [];
       motor['rpm'] = [

@@ -75,9 +75,10 @@ class _MotorInfoCardState extends State<MotorInfoCard> {
                     '${widget.index + 1}',
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        color: widget.error == -1 || widget.error == 1 || error
-                            ? kPrimaryColor
-                            : kBackgroundColor),
+                        color:
+                            widget.error == -1 || widget.error == 1 || error
+                                ? kPrimaryColor
+                                : kBackgroundColor),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -86,19 +87,21 @@ class _MotorInfoCardState extends State<MotorInfoCard> {
                         widget.value.toStringAsFixed(2),
                         style: TextStyle(
                             fontSize: 18,
-                            color:
-                                widget.error == -1 || widget.error == 1 || error
-                                    ? kPrimaryColor
-                                    : kBackgroundColor),
+                            color: widget.error == -1 ||
+                                    widget.error == 1 ||
+                                    error
+                                ? kPrimaryColor
+                                : kBackgroundColor),
                       ),
                       Text(
                         ' RPM',
                         style: TextStyle(
                             fontSize: 10,
-                            color:
-                                widget.error == -1 || widget.error == 1 || error
-                                    ? kPrimaryColor
-                                    : kBackgroundColor),
+                            color: widget.error == -1 ||
+                                    widget.error == 1 ||
+                                    error
+                                ? kPrimaryColor
+                                : kBackgroundColor),
                       ),
                     ],
                   ),
@@ -109,7 +112,7 @@ class _MotorInfoCardState extends State<MotorInfoCard> {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: kDefaultPadding / 4),
+                    horizontal: 8, vertical: kDefaultPadding / 4),
                 child: SizedBox(
                   width: 24,
                   height: 24,
