@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easytech_electric_blue/screens/work_screen.dart';
 import 'package:easytech_electric_blue/services/main_timer.dart';
 import 'package:easytech_electric_blue/services/geolocation.dart';
@@ -26,40 +28,53 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _init() async {
-    MainTimer().stopTimer();
-    await Geolocation.init();
-    LockTask.enable();
-    Wakelock.enable();
-    VolumeController().listener((volume) {
-      if (volume < 1.0) {
-        VolumeController().maxVolume();
-      }
-    });
-    final prefs = await SharedPreferences.getInstance();
-    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
-    // isFirstTime = true;
+    if (!Platform.isWindows) {
+      MainTimer().stopTimer();
+      await Geolocation.init();
+      LockTask.enable();
+      Wakelock.enable();
+      VolumeController().listener((volume) {
+        if (volume < 1.0) {
+          VolumeController().maxVolume();
+        }
+      });
+      final prefs = await SharedPreferences.getInstance();
+      bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+      // isFirstTime = true;
 
-    if (isFirstTime) {
-      await StorageManager().save();
-      await StorageManager().load();
-      await prefs.setBool('isFirstTime', false);
+      if (isFirstTime) {
+        await StorageManager().save();
+        await StorageManager().load();
+        await prefs.setBool('isFirstTime', false);
+      } else {
+        await StorageManager().load();
+      }
+      await soundManager.init();
+      await Permission.bluetoothScan.request();
+      await Permission.bluetoothConnect.request();
+      Bluetooth().connect();
+      MainTimer().startTimer();
+      if (!mounted) return;
+      await Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          settings: const RouteSettings(name: WorkScreen.route),
+          transitionDuration: const Duration(seconds: 3),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              FadeTransition(opacity: animation, child: const WorkScreen()),
+        ),
+      );
     } else {
-      await StorageManager().load();
+      await Future.delayed(const Duration(seconds: 3));
+      if (!mounted) return;
+      await Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          settings: const RouteSettings(name: WorkScreen.route),
+          transitionDuration: const Duration(seconds: 3),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              FadeTransition(opacity: animation, child: const WorkScreen()),
+        ),
+      );
     }
-    await soundManager.init();
-    await Permission.bluetoothScan.request();
-    await Permission.bluetoothConnect.request();
-    Bluetooth().connect();
-    MainTimer().startTimer();
-    if (!mounted) return;
-    await Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        settings: const RouteSettings(name: WorkScreen.route),
-        transitionDuration: const Duration(seconds: 3),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            FadeTransition(opacity: animation, child: const WorkScreen()),
-      ),
-    );
   }
 
   @override

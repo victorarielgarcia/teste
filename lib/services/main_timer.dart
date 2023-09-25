@@ -25,7 +25,36 @@ class MainTimer {
     // motor['rpm'][42] = 5.0;
     // motor['rpm'][43] = 10.0;
     // motor['rpm'][44] = 8.0;
+    // for (var i = 0; i < seed['rate'].length; i++) {
+    //   seed['rate'][i] = 0.0;
+    // }
+    // seed['rate'][0] = 5.0;
+    // seed['rate'][4] = 5.0;
 
+    // seed['rate'][12] = 2.0;
+    // seed['rate'][16] = 2.0;
+
+    // seed['rate'][24] = 8.0;
+    // seed['rate'][28] = 8.0;
+
+    // seed['rate'][19] = 10.0;
+    // seed['rate'][20] = 8.0;
+    // seed['rate'][21] = 7.9;
+    // seed['rate'][22] = 7.8;
+    // seed['rate'][23] = 7.7;
+
+    // seed['rate'][28] = 7.2;
+    // seed['rate'][29] = 7.1;
+    // seed['rate'][30] = 7.0;
+    // seed['rate'][31] = 6.9;
+    // seed['rate'][32] = 6.8;
+    // seed['rate'][33] = 6.7;
+    // seed['rate'][34] = 6.6;
+    // seed['rate'][35] = 6.5;
+
+    // List<double> doubleList =
+    //     (seed['rate'] as List<dynamic>).map((e) => e as double).toList();
+    // seedManager.updateRate(doubleList);
     // // motor['rpm'][6] = 8.0;
     // // motor['rpm'][58] = 10.0;
 
@@ -39,8 +68,6 @@ class MainTimer {
     // List<double> doubleList =
     //     (seed['rate'] as List<dynamic>).map((e) => e as double).toList();
     // seedManager.updateRate(doubleList);
-
-    
 
 // Um mapa para manter contagem de erros para cada motor
     Map<int, int> seedErrorCounts = {};
@@ -81,7 +108,7 @@ class MainTimer {
 
           // Verifica os alertas
           // if (false) {
-            if (status['isPlanting'] && !machine['stoppedMotors'] && connected) {
+          if (status['isPlanting'] && !machine['stoppedMotors'] && connected) {
             // Inicia o monitoramento das linhas após 2 segundos
             if (mainTimer['enableMonitoringCount'] == 2) {
               // Plantadeira devia estar plantando o motor parou, após 5 segundos dar pop-up erro
@@ -101,7 +128,7 @@ class MainTimer {
                     if (percentageDifference >= 10) {
                       seedErrorCounts[i] = (seedErrorCounts[i] ?? 0) + 1;
 
-                      if (seedErrorCounts[i]! >= 7) {
+                      if (seedErrorCounts[i]! >= 10) {
                         if (!seedMotorsWithError.contains(i + 1)) {
                           seedMotorsWithError.add(i + 1);
                         }
@@ -129,7 +156,7 @@ class MainTimer {
                       fertilizerErrorCounts[i] =
                           (fertilizerErrorCounts[i] ?? 0) + 1;
 
-                      if (fertilizerErrorCounts[i]! >= 7) {
+                      if (fertilizerErrorCounts[i]! >= 10) {
                         fertilizerMotorsWithError.add(i + 1);
                         fertilizerErrorCounts[i] = 0; // Reset do contador
                       }
@@ -154,7 +181,7 @@ class MainTimer {
                       brachiariaErrorCounts[i] =
                           (brachiariaErrorCounts[i] ?? 0) + 1;
 
-                      if (brachiariaErrorCounts[i]! >= 7) {
+                      if (brachiariaErrorCounts[i]! >= 10) {
                         brachiariaMotorsWithError.add(i + 1);
                         brachiariaErrorCounts[i] = 0; // Reset do contador
                       }
@@ -197,7 +224,7 @@ class MainTimer {
           }
           // Incrementa contadores
           mainTimer['manutenceCount']++;
-          print("MAIN TIMER: $mainTimer $seedErrorCounts");
+          // print("MAIN TIMER: $mainTimer $seedErrorCounts");
         }
       },
     );

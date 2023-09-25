@@ -131,6 +131,8 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                         JMButton(
                           text: "Conectar",
                           onPressed: () async {
+                            connected = false;
+                        
                             bluetooth['address'] = device.address;
                           },
                         ),

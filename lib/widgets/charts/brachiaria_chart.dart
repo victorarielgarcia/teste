@@ -69,7 +69,7 @@ class BrachiariaChartState extends State<BrachiariaChart> {
 
       if (percentageDifference < 5) {
         error = 0;
-      } else if (percentageDifference >= 5 && percentageDifference < 10) {
+      } else if (percentageDifference > 5 && percentageDifference < 10) {
         error = 1;
       } else if (percentageDifference >= 10) {
         error = 2;

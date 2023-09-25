@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:battery_plus/battery_plus.dart';
-import 'package:easytech_electric_blue/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -178,8 +177,8 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     } else {
       LockTask.enable();
       status['minimized'] = false;
-      Navigator.pushNamedAndRemoveUntil(
-          context, SplashScreen.route, (route) => false);
+      // Navigator.pushNamedAndRemoveUntil(
+      //     context, SplashScreen.route, (route) => false);
     }
   }
 

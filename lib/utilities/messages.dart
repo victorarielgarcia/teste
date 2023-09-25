@@ -15,6 +15,7 @@ class Messages {
     Messages().message["setMotors"]!();
     Messages().message["sensor"]!(LiftSensor().getSelectableOption());
     Messages().message['requestSettings']!();
+    Messages().message["advanced"]!();
     sendWithQueue = false;
   }
 
@@ -373,7 +374,7 @@ class Messages {
     'setMotors': () async {
       List<int> setMotorsMessage = List.filled(8 * 34, 0);
 
-      for (var i = 0; i < brachiaria['setMotors'].length; i++) {
+      for (var i = 0; i < brachiaria['layout'].length; i++) {
         int index = 0;
 
         brachiaria['addressedLayout'][i] > 30
@@ -381,7 +382,7 @@ class Messages {
             : index = brachiaria['addressedLayout'][i];
         setMotorsMessage[index - 1] = brachiaria['setMotors'][i];
       }
-      for (var i = 0; i < fertilizer['setMotors'].length; i++) {
+      for (var i = 0; i < fertilizer['layout'].length; i++) {
         int index = 0;
 
         fertilizer['addressedLayout'][i] > 30
@@ -390,7 +391,7 @@ class Messages {
 
         setMotorsMessage[index - 1] = fertilizer['setMotors'][i];
       }
-      for (var i = 0; i < seed['setMotors'].length; i++) {
+      for (var i = 0; i < machine['numberOfLines']; i++) {
         int index = 0;
 
         seed['addressedLayout'][i] > 30
@@ -408,7 +409,7 @@ class Messages {
           setMotorsBinary.add(converted);
         }
       }
-
+      print("TESTE SET MOTORS: $setMotorsBinary");
       Bluetooth().send(0, 0, 0, Uint8List.fromList(setMotorsBinary), 1);
     },
     'stopMotors': () async {

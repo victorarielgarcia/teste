@@ -34,6 +34,7 @@ class StorageManager {
     fertilizer = (await retrieveData('fertilizer'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
         {};
+
     brachiaria = (await retrieveData('brachiaria'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
         {};
@@ -58,7 +59,7 @@ class StorageManager {
     liftSensor = (await retrieveData('liftSensor'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
         {};
-    liftSensorManager.update(!liftSensor['machineLifted']);
+    // liftSensorManager.update(!liftSensor['machineLifted']);
 
     advancedSettings = (await retrieveData('advancedSettings'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??

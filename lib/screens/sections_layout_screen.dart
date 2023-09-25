@@ -23,13 +23,13 @@ class SectionsLayoutScreen extends StatefulWidget {
 
 class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
   bool disableNavigation = false;
-
+ 
   void checkLayout() {
     int total = 0;
     for (int section in machine['sectionsLayout']) {
       total += section;
     }
-    if (total < machine["numberOfLines"]) {
+    if (total < machine["numberOfLines"] && total > 0) {
       setState(() {
         disableNavigation = true;
       });

@@ -97,20 +97,20 @@ class Bluetooth {
 
   Future connect() async {
     try {
-      await FlutterBluetoothSerial.instance.requestEnable();
-
-      await connection?.finish();
-      await connection?.close();
-      sendWithQueue = true;
-      //  connection = await BluetoothConnection.toAddress('A8:42:E3:89:9F:62');
-      connection = await BluetoothConnection.toAddress(bluetooth['address']);
-      AppLogger.log("Bluetooth Connected!");
-      connected = true;
-      bluetoothManager.changeConnectionState(connected);
-
-      // Messages().sendSettingsRequest();
-      sendWithQueue = false;
+      if (!status['minimized']) {
+        await FlutterBluetoothSerial.instance.requestEnable();
+        await connection?.finish();
+        await connection?.close();
+        sendWithQueue = true;
+        //  connection = await BluetoothConnection.toAddress('A8:42:E3:89:9F:62');
+        connection = await BluetoothConnection.toAddress(bluetooth['address']);
+        AppLogger.log("Bluetooth Connected!");
+        connected = true;
+        bluetoothManager.changeConnectionState(connected);
+        Messages().sendSettingsRequest();
+        sendWithQueue = false;
       startRead(connection!.input!.cast<List<int>>());
+      }
     } catch (e) {
       AppLogger.error("ERROR CONNECTION BLUETOOTH: $e");
       // Timer(const Duration(seconds: 8), () {

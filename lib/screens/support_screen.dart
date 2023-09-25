@@ -1,4 +1,4 @@
-
+import 'package:easytech_electric_blue/services/lock_task.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,7 +31,9 @@ class _SupportScreenState extends State<SupportScreen> {
       resizeToAvoidBottomInset: true,
       backgroundColor: kBackgroundColor,
       bottomNavigationBar: JMBottomNavigationBar(
-        onExit: () {},
+        onExit: () {
+          LockTask.enable();
+        },
       ),
       appBar:
           const PreferredSize(preferredSize: Size(800, 70), child: TopBar()),
@@ -67,6 +69,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                   'assets/icons/remote_access.svg',
                                 ),
                                 function: () async {
+                                  LockTask.disable();
                                   await LaunchApp.openApp(
                                     androidPackageName:
                                         'com.carriez.flutter_hbb',

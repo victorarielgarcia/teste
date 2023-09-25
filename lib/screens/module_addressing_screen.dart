@@ -77,6 +77,61 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
     }
   }
 
+  reallocate(var originalList, var configuration, int moduleSize) {
+    var result = [];
+    int currentIndex = 0; // Start at the first module
+
+    for (int i = 0; i < configuration.length; i++) {
+      int quantityToAdd = configuration[i];
+
+      while (quantityToAdd > 0) {
+        int quantityInThisModule =
+            quantityToAdd > moduleSize ? moduleSize : quantityToAdd;
+        result.addAll(originalList.sublist(
+            currentIndex, currentIndex + quantityInThisModule));
+
+        // Update indices and quantity to add
+        currentIndex += moduleSize;
+        quantityToAdd -= quantityInThisModule;
+      }
+    }
+
+    return result;
+  }
+
+  void defineModuleLayout() {
+    // Brachiaria module
+    var configuration = [];
+
+    for (var element in module['layout']) {
+      configuration.add(element[0]);
+    }
+
+    brachiaria['addressedLayout'] =
+        reallocate(brachiaria['addressedLayoutDefault'], configuration, 3);
+
+    // Fertilizer module
+    configuration.clear();
+    for (var element in module['layout']) {
+      configuration.add(element[1]);
+    }
+
+    fertilizer['addressedLayout'] =
+        reallocate(fertilizer['addressedLayoutDefault'], configuration, 6);
+
+    // Seed module
+    configuration.clear();
+    for (var element in module['layout']) {
+      configuration.add(element[2]);
+    }
+
+    seed['addressedLayout'] =
+        reallocate(seed['addressedLayoutDefault'], configuration, 12);
+
+    print("RESULTADO: ${seed['addressedLayout']}");
+    // Deveria printar [4, 5, 25, 26, 27, 46, 47]
+  }
+
   @override
   void initState() {
     if (connected) {
@@ -168,12 +223,12 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: kDefaultPadding * 3),
+                const SizedBox(height: kDefaultPadding / 2),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: kDefaultPadding * 2),
                   child: SizedBox(
-                    height: 280,
+                    height: 570,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: module["layout"].length + 1,
@@ -185,44 +240,50 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                           child: (module["layout"].length) == index
                               ? InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      module["layout"].add(1);
-                                      module["addressed"].add(0);
-                                      // machineManager.update(
-                                      //      module["layout"], fertilizerLayout);
-                                    });
+                                    if (module["addressed"].length <= 4) {
+                                      setState(() {
+                                        module["layout"].add([0, 0, 0]);
+                                        module["addressed"].add(0);
+                                      });
+                                    }
                                   },
-                                  child: Container(
-                                      height: 145,
-                                      width: 200,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.4),
-                                          border: Border.all(
-                                              color: kStrokeColor, width: 1),
-                                          borderRadius: BorderRadius.circular(
-                                              kDefaultBorderSize)),
-                                      child: const Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Adicionar",
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          SizedBox(height: kDefaultPadding / 4),
-                                          Text("+",
-                                              style: TextStyle(
+                                  child: module["addressed"].length <= 4
+                                      ? Container(
+                                          height: 145,
+                                          width: 200,
+                                          decoration: BoxDecoration(
+                                              color:
+                                                  Colors.white.withOpacity(0.4),
+                                              border: Border.all(
+                                                  color: kStrokeColor,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      kDefaultBorderSize)),
+                                          child: const Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "Adicionar",
+                                                style: TextStyle(
                                                   color: kPrimaryColor,
-                                                  fontSize: 28)),
-                                        ],
-                                      )),
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height: kDefaultPadding / 4),
+                                              Text("+",
+                                                  style: TextStyle(
+                                                      color: kPrimaryColor,
+                                                      fontSize: 28)),
+                                            ],
+                                          ))
+                                      : const SizedBox(),
                                 )
                               : JMCard(
-                                  height: 300,
+                                  height: 578,
                                   width: 200,
                                   body: Column(
                                     mainAxisAlignment:
@@ -230,12 +291,12 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: kDefaultPadding / 2),
-                                        child: Stack(
-                                          children: [
-                                            Row(
+                                      Stack(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: kDefaultPadding / 2),
+                                            child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
@@ -249,61 +310,60 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                                 ),
                                               ],
                                             ),
-                                            index != module["layout"].length - 1
-                                                ? const SizedBox()
-                                                : SizedBox(
-                                                    width: double.infinity,
-                                                    height: 30,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets
-                                                                  .only(
-                                                              right:
-                                                                  kDefaultPadding /
-                                                                      2),
-                                                          child: ClipOval(
-                                                            child: Material(
-                                                              color:
-                                                                  kPrimaryColor,
-                                                              child: InkWell(
-                                                                splashColor:
-                                                                    kSecondaryColor,
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    module["layout"]
-                                                                        .removeLast();
-                                                                    module["addressed"]
-                                                                        .removeLast();
-                                                                    // machineManager.update(
-                                                                    //      module["layout"], fertilizerLayout);
-                                                                  });
-                                                                },
-                                                                child: const SizedBox(
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    child: Icon(
-                                                                        Icons
-                                                                            .delete,
-                                                                        color:
-                                                                            kSecondaryColor,
-                                                                        size:
-                                                                            18)),
-                                                              ),
+                                          ),
+                                          index != module["layout"].length - 1
+                                              ? const SizedBox()
+                                              : SizedBox(
+                                                  width: double.infinity,
+                                                  height: 40,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets
+                                                            .only(
+                                                            right:
+                                                                kDefaultPadding /
+                                                                    2),
+                                                        child: ClipOval(
+                                                          child: Material(
+                                                            color:
+                                                                kPrimaryColor,
+                                                            child: InkWell(
+                                                              splashColor:
+                                                                  kSecondaryColor,
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  module["layout"]
+                                                                      .removeLast();
+                                                                  module["addressed"]
+                                                                      .removeLast();
+                                                                  // machineManager.update(
+                                                                  //      module["layout"], fertilizerLayout);
+                                                                });
+                                                              },
+                                                              child: const SizedBox(
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                  child: Icon(
+                                                                      Icons
+                                                                          .delete,
+                                                                      color:
+                                                                          kSecondaryColor,
+                                                                      size:
+                                                                          18)),
                                                             ),
                                                           ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  )
-                                          ],
-                                        ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                        ],
                                       ),
                                       Column(
                                         children: [
-                                          // Icon(Icons.check_circle),
                                           module['addressed'][index] == 1
                                               ? const Icon(
                                                   Icons.check_circle,
@@ -318,7 +378,7 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                                     )
                                                   : Padding(
                                                       padding: const EdgeInsets
-                                                              .only(
+                                                          .only(
                                                           bottom:
                                                               kDefaultPadding /
                                                                   4),
@@ -329,9 +389,8 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                                         size: 32,
                                                       ),
                                                     ),
-
                                           const SizedBox(
-                                              height: kDefaultPadding / 4),
+                                              height: kDefaultPadding / 8),
                                           !(module['addressed'][index] == 1) ||
                                                   moduleVerionState
                                                           .version[index] ==
@@ -382,75 +441,295 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                         ],
                                       ),
                                       const Divider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                      Column(
                                         children: [
-                                          Text(
-                                            module["layout"][index].toString(),
-                                            style: const TextStyle(
-                                                color: kPrimaryColor,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 24),
+                                          Column(
+                                            children: [
+                                              const Text(
+                                                "Braquiária",
+                                                style: TextStyle(
+                                                    color: kPrimaryColor,
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 16),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    module["layout"][index][0]
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        color: kPrimaryColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 24),
+                                                  ),
+                                                  const Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom: 3.5,
+                                                    ),
+                                                    child: Text(
+                                                      " motores",
+                                                      style: TextStyle(
+                                                          color: kPrimaryColor,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                  height: kDefaultPadding / 4),
+                                              SizedBox(
+                                                height: 50,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 98,
+                                                      height: 50,
+                                                      child: JMButton(
+                                                        text: '-',
+                                                        onPressed: () {
+                                                          if (module["layout"]
+                                                                  [index][0] >
+                                                              0) {
+                                                            setState(() {
+                                                              module["layout"]
+                                                                  [index][0]--;
+                                                            });
+                                                            defineModuleLayout();
+                                                          }
+                                                        },
+                                                        lessButton: true,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        color: kSecondaryColor,
+                                                        height: 50,
+                                                        width: 1),
+                                                    SizedBox(
+                                                      width: 98,
+                                                      height: 50,
+                                                      child: JMButton(
+                                                        text: '+',
+                                                        onPressed: () {
+                                                          if (module["layout"]
+                                                                  [index][0] <
+                                                              3) {
+                                                            setState(() {
+                                                              module["layout"]
+                                                                  [index][0]++;
+                                                            });
+                                                            defineModuleLayout();
+                                                          }
+                                                        },
+                                                        moreButton: true,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          const Text(
-                                            " linhas",
-                                            style: TextStyle(
-                                                color: kPrimaryColor,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 18),
+                                          const SizedBox(
+                                              height: kDefaultPadding / 2),
+                                          Column(
+                                            children: [
+                                              const Text(
+                                                "Adubo",
+                                                style: TextStyle(
+                                                    color: kPrimaryColor,
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 16),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    module["layout"][index][1]
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        color: kPrimaryColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 24),
+                                                  ),
+                                                  const Padding(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 3.5),
+                                                    child: Text(
+                                                      " motores",
+                                                      style: TextStyle(
+                                                          color: kPrimaryColor,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                  height: kDefaultPadding / 4),
+                                              SizedBox(
+                                                height: 50,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 98,
+                                                      height: 50,
+                                                      child: JMButton(
+                                                        text: '-',
+                                                        onPressed: () {
+                                                          if (module["layout"]
+                                                                  [index][1] >
+                                                              0) {
+                                                            setState(() {
+                                                              module["layout"]
+                                                                  [index][1]--;
+                                                            });
+                                                            defineModuleLayout();
+                                                          }
+                                                        },
+                                                        lessButton: true,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        color: kSecondaryColor,
+                                                        height: 50,
+                                                        width: 1),
+                                                    SizedBox(
+                                                      width: 98,
+                                                      height: 50,
+                                                      child: JMButton(
+                                                        text: '+',
+                                                        onPressed: () {
+                                                          if (module["layout"]
+                                                                  [index][1] <
+                                                              6) {
+                                                            setState(() {
+                                                              module["layout"]
+                                                                  [index][1]++;
+                                                            });
+                                                            defineModuleLayout();
+                                                          }
+                                                        },
+                                                        moreButton: true,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                              height: kDefaultPadding / 2),
+                                          Column(
+                                            children: [
+                                              const Text(
+                                                "Semente",
+                                                style: TextStyle(
+                                                    color: kPrimaryColor,
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 16),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    module["layout"][index][2]
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        color: kPrimaryColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 24),
+                                                  ),
+                                                  const Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom: 3.5,
+                                                    ),
+                                                    child: Text(
+                                                      " motores",
+                                                      style: TextStyle(
+                                                          color: kPrimaryColor,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                  height: kDefaultPadding / 4),
+                                              SizedBox(
+                                                height: 50,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 98,
+                                                      height: 50,
+                                                      child: JMButton(
+                                                        text: '-',
+                                                        onPressed: () {
+                                                          if (module["layout"]
+                                                                  [index][2] >
+                                                              0) {
+                                                            setState(() {
+                                                              module["layout"]
+                                                                  [index][2]--;
+                                                            });
+                                                            defineModuleLayout();
+                                                          }
+                                                        },
+                                                        lessButton: true,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        color: kSecondaryColor,
+                                                        height: 50,
+                                                        width: 1),
+                                                    SizedBox(
+                                                      width: 98,
+                                                      height: 50,
+                                                      child: JMButton(
+                                                        text: '+',
+                                                        onPressed: () {
+                                                          if (module["layout"]
+                                                                  [index][2] <
+                                                              12) {
+                                                            setState(() {
+                                                              module["layout"]
+                                                                  [index][2]++;
+                                                            });
+                                                            defineModuleLayout();
+                                                          }
+                                                        },
+                                                        moreButton: true,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(
-                                          height: kDefaultPadding / 4),
-                                      SizedBox(
-                                        height: 50,
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            SizedBox(
-                                              width: 98,
-                                              height: 50,
-                                              child: JMButton(
-                                                text: '-',
-                                                onPressed: () {
-                                                  if (module["layout"][index] >
-                                                      0) {
-                                                    setState(() {
-                                                      module["layout"][index]--;
-                                                    });
-                                                  }
-                                                },
-                                                lessButton: true,
-                                              ),
-                                            ),
-                                            Container(
-                                                color: kSecondaryColor,
-                                                height: 50,
-                                                width: 1),
-                                            SizedBox(
-                                              width: 98,
-                                              height: 50,
-                                              child: JMButton(
-                                                text: '+',
-                                                onPressed: () {
-                                                  if (module["layout"][index] <
-                                                      12) {
-                                                    setState(() {
-                                                      module["layout"][index]++;
-                                                    });
-                                                  }
-                                                },
-                                                moreButton: true,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
                                     ],
                                   )),
                         );

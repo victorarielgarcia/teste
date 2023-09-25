@@ -254,7 +254,7 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                         : Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     bottom:
                                                                         kDefaultPadding /
                                                                             4),
@@ -304,10 +304,11 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                                           'addressedLayout']
                                                                       [index]
                                                                   .toString());
-                                                                  
+
                                                           Messages().message[
                                                                   "motorAddressing"]!(
                                                               numberMotor);
+
                                                           setState(() {
                                                             brachiaria[
                                                                     'addressed']
@@ -418,7 +419,7 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                         : Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     bottom:
                                                                         kDefaultPadding /
                                                                             4),
@@ -445,45 +446,43 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                             ? "Endereçar"
                                                             : "Cancelar",
                                                     onPressed: () {
-                                                      bool
-                                                          noMotorAddressing =
-                                                          brachiaria[
-                                                                      'addressed']
-                                                                  .every(
-                                                                      (item) =>
-                                                                          item !=
-                                                                          -1) ||
-                                                              fertilizer[
-                                                                      'addressed']
-                                                                  .every(
-                                                                      (item) =>
-                                                                          item !=
-                                                                          -1) ||
-                                                              seed['addressed']
-                                                                  .every(
-                                                                      (item) =>
-                                                                          item !=
-                                                                          -1);
-                                                      if (fertilizer['addressed']
-                                                                  [index] !=
-                                                              -1 &&
-                                                          noMotorAddressing) {
-                                                        int numberMotor = 0;
-                                                        numberMotor = numberMotor =
-                                                            int.parse(fertilizer[
-                                                                        'addressedLayout']
-                                                                    [index]
-                                                                .toString());
+                                                      if (!isAddressing) {
+                                                        bool noMotorAddressing = brachiaria[
+                                                                    'addressed']
+                                                                .every((item) =>
+                                                                    item !=
+                                                                    -1) ||
+                                                            fertilizer[
+                                                                    'addressed']
+                                                                .every((item) =>
+                                                                    item !=
+                                                                    -1) ||
+                                                            seed['addressed']
+                                                                .every((item) =>
+                                                                    item != -1);
+                                                        if (fertilizer['addressed']
+                                                                    [index] !=
+                                                                -1 &&
+                                                            noMotorAddressing) {
+                                                          int numberMotor = 0;
+                                                          numberMotor = numberMotor =
+                                                              int.parse(fertilizer[
+                                                                          'addressedLayout']
+                                                                      [index]
+                                                                  .toString());
 
-                                                        Messages().message[
-                                                                "motorAddressing"]!(
-                                                            numberMotor);
-                                                        setState(() {
-                                                          fertilizer[
-                                                                  'addressed']
-                                                              [index] = -1;
-                                                        });
-                                                        isAddressing = true;
+                                                          Messages().message[
+                                                                  "motorAddressing"]!(
+                                                              numberMotor);
+                                                          setState(() {
+                                                            fertilizer[
+                                                                    'addressed']
+                                                                [index] = -1;
+                                                          });
+                                                          isAddressing = true;
+                                                        } else {
+                                                          cancelAddressing();
+                                                        }
                                                       } else {
                                                         cancelAddressing();
                                                       }
@@ -574,7 +573,7 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                     )
                                                   : Padding(
                                                       padding: const EdgeInsets
-                                                              .only(
+                                                          .only(
                                                           bottom:
                                                               kDefaultPadding /
                                                                   4),
@@ -596,46 +595,50 @@ class _MotorAddressingScreenState extends State<MotorAddressingScreen> {
                                                       ? "Endereçar"
                                                       : "Cancelar",
                                               onPressed: () {
-                                                bool noMotorAddressing =
-                                                    brachiaria['addressed']
-                                                            .every((item) =>
-                                                                item != -1) ||
-                                                        fertilizer['addressed']
-                                                            .every((item) =>
-                                                                item != -1) ||
-                                                        seed['addressed'].every(
-                                                            (item) =>
-                                                                item != -1);
-                                                if (seed['addressed'][index] !=
-                                                        -1 &&
-                                                    noMotorAddressing) {
-                                                  int numberMotor = 0;
+                                                if (!isAddressing) {
+                                                  bool noMotorAddressing =
+                                                      brachiaria['addressed']
+                                                              .every((item) =>
+                                                                  item != -1) ||
+                                                          fertilizer[
+                                                                  'addressed']
+                                                              .every((item) =>
+                                                                  item != -1) ||
+                                                          seed['addressed']
+                                                              .every((item) =>
+                                                                  item != -1);
+                                                  if (seed['addressed']
+                                                              [index] !=
+                                                          -1 &&
+                                                      noMotorAddressing) {
+                                                    int numberMotor = 0;
 
-                                                  // seed['addressedLayout']
-                                                  //     .forEach((k, v) {
-                                                  //   if (v == index + 1) {
-                                                  //     numberMotor =
-                                                  //         int.parse(k);
-                                                  //   }
-                                                  // });
+                                                    // seed['addressedLayout']
+                                                    //     .forEach((k, v) {
+                                                    //   if (v == index + 1) {
+                                                    //     numberMotor =
+                                                    //         int.parse(k);
+                                                    //   }
+                                                    // });
 
-                                                  numberMotor = numberMotor =
-                                                      int.parse(
-                                                          seed['addressedLayout']
-                                                                  [index]
-                                                              .toString());
+                                                    numberMotor = int.parse(
+                                                        seed['addressedLayout']
+                                                                [index]
+                                                            .toString());
 
-                                                  // print(
-                                                  //     "NUMER GO DO MOTOR: ${numberMotor}");
-
-                                                  Messages().message[
-                                                          "motorAddressing"]!(
-                                                      numberMotor);
-                                                  setState(() {
-                                                    seed['addressed'][index] =
-                                                        -1;
-                                                  });
-                                                  isAddressing = true;
+                                                    // print(
+                                                    //     "NUMERO MOTOR ENDEREÇAMENTO: $numberMotor");
+                                                    Messages().message[
+                                                            "motorAddressing"]!(
+                                                        numberMotor);
+                                                    setState(() {
+                                                      seed['addressed'][index] =
+                                                          -1;
+                                                    });
+                                                    isAddressing = true;
+                                                  } else {
+                                                    cancelAddressing();
+                                                  }
                                                 } else {
                                                   cancelAddressing();
                                                 }

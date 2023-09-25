@@ -35,7 +35,7 @@ class LogSaver {
     DateTime dateNow = DateTime.now();
     Position position = await Geolocation.getLocation();
     writeLog(
-        '$dateNow | Info Tablet - Speed: ${position.speed} - LatLong: ${position.latitude} , ${position.longitude} | ${motor.toString()} | ${velocity.toString()} | ${simulated.toString()} | ${antenna.toString()} | ${liftSensor.toString()}');
+        '$dateNow | Info Tablet - Speed: ${position.speed} - LatLong: ${position.latitude} , ${position.longitude} | ${motor.toString()} | ${velocity.toString()} | ${simulated.toString()} | ${antenna.toString()} | ${liftSensor.toString()} | ${seed.toString()}');
   }
 
   static Future<FileSystemEntity> clearLog(String log) async {
