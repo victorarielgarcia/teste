@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:easytech_electric_blue/screens/work_screen.dart';
 import 'package:easytech_electric_blue/services/main_timer.dart';
 import 'package:easytech_electric_blue/services/geolocation.dart';
@@ -8,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:window_manager/window_manager.dart';
 import '../services/bluetooth.dart';
 import '../services/lock_task.dart';
 import '../services/storage_manager.dart';
@@ -29,10 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _init() async {
     if (!Platform.isWindows) {
-      MainTimer().stopTimer();
-      await Geolocation.init();
       LockTask.enable();
       Wakelock.enable();
+      MainTimer().stopTimer();
+      await Geolocation.init();
       VolumeController().listener((volume) {
         if (volume < 1.0) {
           VolumeController().maxVolume();
@@ -52,8 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
       await soundManager.init();
       await Permission.bluetoothScan.request();
       await Permission.bluetoothConnect.request();
-      Bluetooth().connect();
+      await Bluetooth().startScan();
       MainTimer().startTimer();
+
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
         PageRouteBuilder(
@@ -64,6 +65,9 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       );
     } else {
+      systemSimulationMode = true;
+      await windowManager.ensureInitialized();
+      windowManager.setFullScreen(true);
       await Future.delayed(const Duration(seconds: 3));
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(

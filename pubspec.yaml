@@ -39,7 +39,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   flutter_svg: ^2.0.1
   battery_plus: ^4.0.1
-  flutter_bluetooth_serial: ^0.4.0
+  flutter_reactive_ble: ^5.2.0
   permission_handler: ^10.2.0
   external_app_launcher: ^3.1.0
   fl_chart: ^0.63.0
@@ -54,6 +54,8 @@ dependencies:
   sensors_plus: ^3.0.3
   path: ^1.8.3
   volume_controller: ^2.0.7
+  window_manager: ^0.3.6
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

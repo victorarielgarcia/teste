@@ -18,6 +18,7 @@ class MotorScreen extends StatefulWidget {
 
 class _MotorScreenState extends State<MotorScreen> {
   final motorState = motorManager.state;
+
   void motorListener() {
     if (mounted) {
       setState(() {
@@ -32,8 +33,70 @@ class _MotorScreenState extends State<MotorScreen> {
       Bluetooth().currentScreen(context, 99);
     }
     motorManager.addListener(motorListener);
+
+    // if (systemSimulationMode) {
+    //   refreshState();
+    // }
     super.initState();
   }
+
+  // Future<dynamic> refreshState() async {
+  //   if (mounted) {
+  //     double speed = Speed.getCurrentVelocity();
+  //     if (speed > 0) {
+  //       if (machine['diskFilling']) {
+  //         motor['targetRPMSeed'] = 10.0;
+  //       } else {
+  //         motor['targetRPMSeed'] =
+  //             ((seed['desiredRate'] / seed['numberOfHoles']) *
+  //                 (speed / 3.6) *
+  //                 60);
+  //       }
+
+  //       motor['targetRPMFertilizer'] = (((fertilizer['desiredRate'] /
+  //                       (10000 / machine['spacing']) /
+  //                       fertilizer['constantWeight']) *
+  //                   (speed / 3.6) *
+  //                   60) *
+  //               10) /
+  //           fertilizer['gearRatio'];
+
+  //       motor['targetRPMBrachiaria'] = (((brachiaria['desiredRate'] /
+  //                       (10000 / machine['spacing']) /
+  //                       brachiaria['constantWeight']) *
+  //                   (speed / 3.6) *
+  //                   60) *
+  //               10) /
+  //           brachiaria['gearRatio'];
+
+  //       for (var i = 0; i < brachiaria['layout'].length; i++) {
+  //         motor['rpm'][brachiaria['addressedLayout'][i] - 1] =
+  //             motor['targetRPMBrachiaria'] +
+  //                 (Random().nextInt(10).toDouble() / 19.4);
+  //       }
+  //       for (var i = 0; i < fertilizer['layout'].length; i++) {
+  //         motor['rpm'][fertilizer['addressedLayout'][i] - 1] =
+  //             motor['targetRPMFertilizer'] +
+  //                 (Random().nextInt(10).toDouble() / 19.4);
+  //       }
+  //       for (var i = 0; i < machine['numberOfLines']; i++) {
+  //         motor['rpm'][seed['addressedLayout'][i] - 1] =
+  //             motor['targetRPMSeed'] + (Random().nextInt(10).toDouble() / 19.4);
+  //       }
+  //       motorManager.updateRPM(
+  //         motor['rpm'],
+  //         motor['targetRPMBrachiaria'],
+  //         motor['targetRPMFertilizer'],
+  //         motor['targetRPMSeed'],
+  //       );
+  //       await Future<dynamic>.delayed(
+  //         const Duration(seconds: 1),
+  //       );
+
+  //       await refreshState();
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {

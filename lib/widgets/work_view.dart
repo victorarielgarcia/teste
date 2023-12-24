@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -117,7 +118,7 @@ class _JMWorkViewState extends State<JMWorkView>
     return Stack(
       children: [
         SizedBox(
-          width: 660,
+          width: !Platform.isWindows ? 660 : 910,
           height: 365,
           child: ClipRect(
             child: OverflowBox(

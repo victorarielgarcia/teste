@@ -85,13 +85,13 @@ class SeedChartState extends State<SeedChart> {
     double width = 16,
     List<int> showTooltips = const [],
   }) {
-    // if (((y < 100 - seed["secondErrorLimit"]) ||
-    //         (y > 100 + seed["secondErrorLimit"])) &&
-    //     status['isPlanting'] &&
-    //     seed['setSensors'][x - 1] == 1 &&
-    //     !machine['stoppedMotors']) {
-    //   soundManager.playSound('beep');
-    // }
+    if (((y < 100 - seed["secondErrorLimit"]) ||
+            (y > 100 + seed["secondErrorLimit"])) &&
+        status['isPlanting'] &&
+        seed['setSensors'][x - 1] == 1 &&
+        !machine['stoppedMotors']) {
+      soundManager.playSound('beep');
+    }
     if (((y < 100 - seed["secondErrorLimit"])) &&
         status['isPlanting'] &&
         seed['setSensors'][x - 1] == 1 &&
@@ -229,7 +229,6 @@ class SeedChartState extends State<SeedChart> {
       alignment: BarChartAlignment.center,
       barGroups: List.generate(machine["numberOfLines"], (i) {
         int index = i + 1;
-
         // Lógica de ajuste de "i" com base no layout
         if (index <= (module['layout'][0][2] as int)) {
           // Sem alterações

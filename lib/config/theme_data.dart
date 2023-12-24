@@ -41,6 +41,7 @@ class ThemeDefault {
           TargetPlatform.iOS: NoTransitionsBuilder(),
         },
       ),
+
       // checkboxTheme: CheckboxThemeData(
       //   side: MaterialStateBorderSide.resolveWith(
       //     (_) => BorderSide(width: 1, color: kPrimaryColor.withOpacity(0.5)),

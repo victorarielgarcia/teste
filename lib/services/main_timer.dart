@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:easytech_electric_blue/services/bluetooth.dart';
 import 'package:easytech_electric_blue/utilities/global.dart';
 import 'package:easytech_electric_blue/utilities/messages.dart';
@@ -69,7 +70,7 @@ class MainTimer {
     //     (seed['rate'] as List<dynamic>).map((e) => e as double).toList();
     // seedManager.updateRate(doubleList);
 
-// Um mapa para manter contagem de erros para cada motor
+    // Um mapa para manter contagem de erros para cada motor
     Map<int, int> seedErrorCounts = {};
     Map<int, int> fertilizerErrorCounts = {};
     Map<int, int> brachiariaErrorCounts = {};
@@ -81,6 +82,10 @@ class MainTimer {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer timer) {
+        // Cloud.updateMachinePosition();
+
+        // print(jsonEncode(machine));
+
         if (!status['minimized']) {
           // Tocar som de "carência" após dois minutos
           if (mainTimer['lackCount'] == 120) {
@@ -90,18 +95,16 @@ class MainTimer {
 
           // Envia mensagem de manutenção para o módulo Bluetooth
           if (mainTimer['manutenceCount'] == 3) {
-            if (!sendWithQueue && connected) {
-              if (sendManutenceMessage) {
-                Messages().message["manutence"]!();
-              }
+            if (sendManutenceMessage) {
+              Messages().message["manutence"]!();
             }
-            checkConnection = false;
+
             sendManutenceMessage = true;
 
             // Verifica conexão com Bluetooth caso esteja desconectado
-            if (!connected) {
-              Bluetooth().connect();
-            }
+            // if (!connected) {
+            //   Bluetooth().startScan();
+            // }
             bluetoothManager.changeConnectionState(connected);
             mainTimer['manutenceCount'] = 0;
           }

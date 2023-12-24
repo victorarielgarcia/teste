@@ -10,14 +10,11 @@ class StorageManager {
     await storeData('fertilizer', fertilizer);
     await storeData('brachiaria', brachiaria);
     await storeData('velocity', velocity);
-    // await storeData('simulated', simulated);
-    // await storeData('antenna', antenna);
     await storeData('nmea', nmea);
     await storeData('liftSensor', liftSensor);
     await storeData('advancedSettings', advancedSettings);
     await storeData('module', module);
-    // await storeData('section', section);
-    await storeData('bluetooth', bluetooth);
+    await storeData('bluetoothLE', bluetoothLE);
   }
 
   load() async {
@@ -44,13 +41,6 @@ class StorageManager {
         {};
     velocity['speed'] = 0;
 
-    // simulated = (await retrieveData('simulated'))
-    //         ?.map((key, value) => MapEntry(key.toString(), value)) ??
-    //     {};
-
-    // antenna = (await retrieveData('antenna'))
-    //         ?.map((key, value) => MapEntry(key.toString(), value)) ??
-    //     {};
 
     nmea = (await retrieveData('nmea'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
@@ -59,8 +49,7 @@ class StorageManager {
     liftSensor = (await retrieveData('liftSensor'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
         {};
-    // liftSensorManager.update(!liftSensor['machineLifted']);
-
+  
     advancedSettings = (await retrieveData('advancedSettings'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
         {};
@@ -73,11 +62,7 @@ class StorageManager {
       module["addressed"][i] = 0;
     }
 
-    // section = (await retrieveData('section'))
-    //         ?.map((key, value) => MapEntry(key.toString(), value)) ??
-    //     {};
-
-    bluetooth = (await retrieveData('bluetooth'))
+    bluetoothLE = (await retrieveData('bluetoothLE'))
             ?.map((key, value) => MapEntry(key.toString(), value)) ??
         {};
   }

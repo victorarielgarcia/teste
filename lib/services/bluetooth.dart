@@ -4,7 +4,7 @@ import 'package:easytech_electric_blue/services/speed.dart';
 import 'package:easytech_electric_blue/services/storage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import '../utilities/global.dart';
 import '../utilities/messages.dart';
 import '../utilities/nmea.dart';
@@ -13,9 +13,7 @@ import 'logger.dart';
 
 // Bluetooth
 bool connected = false;
-bool verify = false;
-int count = 0;
-late Uint8List message;
+bool connecting = false;
 
 // Nmea
 String tempLatitude = '';
@@ -56,98 +54,170 @@ class Semaphore {
 }
 
 class Bluetooth {
-  static BluetoothConnection? connection;
+  static final Bluetooth _singleton = Bluetooth._internal();
 
-  List<DropdownMenuItem<BluetoothDevice>> getDeviceItems() {
-    List<DropdownMenuItem<BluetoothDevice>> items = [];
-    try {
-      if (devices.isEmpty) {
-        items.add(const DropdownMenuItem(
-          child: Text('Nenhum dispositivo'),
-        ));
-      } else {
-        for (var device in devices) {
-          items.add(DropdownMenuItem(
-            value: device,
-            child: Text(device.name ?? ''),
-          ));
+  factory Bluetooth() {
+    return _singleton;
+  }
+
+  Bluetooth._internal();
+
+  late StreamSubscription<ConnectionStateUpdate> connection;
+  late StreamSubscription<DiscoveredDevice> scanStream;
+  late QualifiedCharacteristic characteristic;
+
+  Uuid serviceUUID = Uuid.parse("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
+  Uuid characteristicUuIdRX =
+      Uuid.parse("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");
+  Uuid characteristicUuIdTX =
+      Uuid.parse("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
+
+  final flutterReactiveBle = FlutterReactiveBle();
+
+  List<String> connectedDevices = [];
+  startScan() async {
+    scanStream = flutterReactiveBle.scanForDevices(withServices: []).listen(
+      (device) {
+        if (!connecting) {
+          if (device.name != "") {
+            int index = devices
+                .indexWhere((existingDevice) => existingDevice.id == device.id);
+            if (index != -1) {
+              devices[index] = device;
+            } else {
+              devices.add(device);
+            }
+
+            if (device.name == "EasyTech Electric" &&
+                bluetoothLE['mainId'] == device.id &&
+                !connected &&
+                !connectedDevices.contains(device.id)) {
+              connecting = true;
+              connectedDevices.add(device.id.toString());
+              characteristic = QualifiedCharacteristic(
+                  serviceId: serviceUUID,
+                  characteristicId: characteristicUuIdRX,
+                  deviceId: device.id);
+              connect(bluetoothLE['mainId']);
+            }
+          }
         }
-      }
-    } catch (e) {
-      AppLogger.error("ERROR GetDeviceItems: $e");
-    }
-
-    return items;
+      },
+      onError: (error) {
+        AppLogger.error("ERROR $error");
+      },
+    );
   }
 
-  Future<void> getPairedDevices() async {
-    try {
-      FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
-      devices = await bluetooth.getBondedDevices();
-      for (var element in devices) {
-        AppLogger.error(element.address);
-      }
-      device = devices.first;
-    } catch (e) {
-      device = const BluetoothDevice(address: '', name: 'Nenhum dispositivo');
-      devices.add(device);
-      AppLogger.error("Error getPairedDevices $e");
+  disconnect() {
+    if (!connected && !connecting) {
+      AppLogger.log(
+          "Não está conectado ou está tentando realizar uma conexão no momento");
+      return;
     }
+    connection.cancel();
+    connected = false;
   }
 
-  Future connect() async {
+  _requestMTU() async {
+    await flutterReactiveBle.requestMtu(
+        deviceId: bluetoothLE['mainId'], mtu: 50);
+  }
+
+  void connect(String id) {
     try {
-      if (!status['minimized']) {
-        await FlutterBluetoothSerial.instance.requestEnable();
-        await connection?.finish();
-        await connection?.close();
-        sendWithQueue = true;
-        //  connection = await BluetoothConnection.toAddress('A8:42:E3:89:9F:62');
-        connection = await BluetoothConnection.toAddress(bluetooth['address']);
-        AppLogger.log("Bluetooth Connected!");
-        connected = true;
+      connection = flutterReactiveBle
+          .connectToDevice(
+        id: id,
+        servicesWithCharacteristicsToDiscover: {
+          serviceUUID: [serviceUUID, characteristicUuIdRX]
+        },
+        connectionTimeout: const Duration(seconds: 2),
+      )
+          .listen((device) {
+        switch (device.connectionState) {
+          case DeviceConnectionState.connecting:
+            {
+              connecting = true;
+              AppLogger.log("Connecting");
+              break;
+            }
+
+          case DeviceConnectionState.connected:
+            {
+              connected = true;
+              connecting = false;
+              bluetoothManager.changeConnectionState(connected);
+              AppLogger.log("Bluetooth Connected!");
+              _requestMTU();
+              _readData();
+              break;
+            }
+          case DeviceConnectionState.disconnecting:
+            {
+              AppLogger.log("Disconnecting from $id");
+              break;
+            }
+          case DeviceConnectionState.disconnected:
+            {
+              connected = false;
+              connecting = false;
+              bluetoothManager.changeConnectionState(connected);
+              connectedDevices.remove(id);
+              AppLogger.log("Disconnected from $id");
+              break;
+            }
+        }
+      }, onError: (Object error) {
+        connected = false;
+        connecting = false;
         bluetoothManager.changeConnectionState(connected);
-        Messages().sendSettingsRequest();
-        sendWithQueue = false;
-      startRead(connection!.input!.cast<List<int>>());
-      }
+        AppLogger.log("ERROR BLE CONNECTION $error");
+      });
     } catch (e) {
-      AppLogger.error("ERROR CONNECTION BLUETOOTH: $e");
-      // Timer(const Duration(seconds: 8), () {
-      //   connect();
-      // });
       connected = false;
+      connecting = false;
       bluetoothManager.changeConnectionState(connected);
+      AppLogger.log("BLE CONNECTION $e");
     }
+  }
+
+  _readData() async {
+    // Requisita o MTU para 40 bytes
+
+    final characteristic = QualifiedCharacteristic(
+        serviceId: serviceUUID,
+        characteristicId: characteristicUuIdTX,
+        deviceId: bluetoothLE['mainId']);
+    // Leitura byte a byte
+    startRead(flutterReactiveBle.subscribeToCharacteristic(characteristic));
   }
 
   send(int deviceId, int type, int messageId, Uint8List data, int cks) async {
-    await _sendSemaphore.acquire();
-    try {
-      await Future.delayed(const Duration(milliseconds: 10));
-      Uint8List header = Uint8List.fromList([35, deviceId, type, messageId]);
-      Uint8List end = Uint8List.fromList([cks, 10]);
-      Uint8List message = Uint8List.fromList(header + data + end);
-      // AppLogger.log('MESSAGE SEND: $message');
-      if (connection != null) {
+    if (connected) {
+      await _sendSemaphore.acquire();
+      try {
+        await Future.delayed(const Duration(milliseconds: 10));
+        Uint8List header = Uint8List.fromList([35, deviceId, type, messageId]);
+        Uint8List end = Uint8List.fromList([cks, 10]);
+        Uint8List message = Uint8List.fromList(header + data + end);
+
         try {
-          connection?.output.add(message);
-          await connection?.output.allSent;
+          await flutterReactiveBle.writeCharacteristicWithoutResponse(
+              QualifiedCharacteristic(
+                  characteristicId: characteristicUuIdRX,
+                  serviceId: serviceUUID,
+                  deviceId: bluetoothLE['mainId']),
+              value: message);
           if (type != 1) {
             sendManutenceMessage = false;
           }
         } catch (e) {
-          bluetoothManager.changeConnectionState(connected);
-          connected = false;
-          // connect();
+          AppLogger.error("SEND BLE: $e");
         }
-      } else {
-        bluetoothManager.changeConnectionState(connected);
-        connected = false;
-        // connect();
+      } finally {
+        _sendSemaphore.release();
       }
-    } finally {
-      _sendSemaphore.release();
     }
   }
 
@@ -196,40 +266,27 @@ class Bluetooth {
   }
 
   Future<void> startRead(Stream<List<int>> stream) async {
-    final byteData = ByteData(1);
     List<int> message = [];
+    bool isStart = false;
+
     await for (final chunk in stream) {
       for (final byte in chunk) {
-        byteData.setUint8(0, byte);
+        if (byte == 35 && message.isEmpty) {
+          isStart = true;
+        }
 
-        if (byte == 35) {
-          verify = true;
-        }
-        if (verify) {
-          if (message.length < 40) {
-            message.add(byte);
-            count++;
-          } else {
-            message.clear();
-            count = 0;
-            verify = false;
-          }
-        }
-        if (count == 40) {
-          if (byte == 10) {
-            // MENSAGEM DEPURAÇÃO
-            int id = message[3];
-            AppLogger.log("ID: $id | $message");
-            // int type = message[2];
-            getData(id, message);
-            checkConnection = true;
-            count = 0;
-            verify = false;
-            message.clear();
-          } else {
-            AppLogger.error("ERROR ON RECEIVE BYTE A BYTE: $message");
-            count = 0;
-            verify = false;
+        if (isStart) {
+          message.add(byte);
+          if (message.length == 40) {
+            if (message.last == 10) {
+              int messageId = message[3];
+              AppLogger.log("ID: $messageId | $message");
+              getData(messageId, message);
+            } else {
+              AppLogger.error("ERROR ON RECEIVE BYTE A BYTE: $message");
+            }
+
+            isStart = false;
             message.clear();
           }
         }
@@ -697,16 +754,11 @@ class Bluetooth {
 getSettingsRequest(id, message) async {
   try {
     if (id == 46) {
-      // if (!sendWithQueue) {
       Messages().sendSettingsRequest();
-      // if (settings['sendAntennaAndLiftSensorModule']) {
       Messages().message["antennaAndLiftSensorModule"]!();
-      // }
       settings['sendAntennaAndLiftSensorModule'] = true;
-      // }
     }
   } catch (e) {
-    sendWithQueue = false;
     AppLogger.error("GET SETTINGS REQUEST ERROR: $e");
   }
 }

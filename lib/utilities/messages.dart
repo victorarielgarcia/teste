@@ -6,7 +6,6 @@ import 'global.dart';
 
 class Messages {
   void sendSettingsRequest() async {
-    sendWithQueue = true;
     Messages().message["machine"]!();
     Messages().message["seed"]!();
     Messages().message["fertilizer"]!();
@@ -16,7 +15,6 @@ class Messages {
     Messages().message["sensor"]!(LiftSensor().getSelectableOption());
     Messages().message['requestSettings']!();
     Messages().message["advanced"]!();
-    sendWithQueue = false;
   }
 
   Map<String, Function> message = {
@@ -409,7 +407,6 @@ class Messages {
           setMotorsBinary.add(converted);
         }
       }
-      print("TESTE SET MOTORS: $setMotorsBinary");
       Bluetooth().send(0, 0, 0, Uint8List.fromList(setMotorsBinary), 1);
     },
     'stopMotors': () async {

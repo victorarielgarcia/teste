@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:easytech_electric_blue/screens/sections_layout_screen.dart';
 import 'package:easytech_electric_blue/screens/seed_screen.dart';
 import 'package:easytech_electric_blue/screens/velocity_screen.dart';
 import 'package:easytech_electric_blue/services/fill_disk_timer.dart';
 import 'package:easytech_electric_blue/widgets/charts/seed_chart.dart';
+import 'package:easytech_electric_blue/widgets/charts/seed_chart_demo.dart';
 import 'package:easytech_electric_blue/widgets/speedometer_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -147,7 +150,7 @@ class _WorkScreenState extends State<WorkScreen> with TickerProviderStateMixin {
                         alignment: Alignment.topLeft,
                         children: [
                           JMCard(
-                            width: 660,
+                            width: !Platform.isWindows ? 660 : 910,
                             height:
                                 (machine['brachiaria'] && machine['fertilizer'])
                                     ? 320
@@ -167,7 +170,7 @@ class _WorkScreenState extends State<WorkScreen> with TickerProviderStateMixin {
                             ),
                           ),
                           SizedBox(
-                            width: 660,
+                            width: !Platform.isWindows ? 660 : 910,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,12 +445,15 @@ class _WorkScreenState extends State<WorkScreen> with TickerProviderStateMixin {
                       JMCard(
                         height:
                             (!machine['brachiaria'] && !machine['fertilizer'])
-                                ? 205
-                                : 160,
+                                ? 205 + (!Platform.isWindows ? 0 : 50)
+                                : 160 + (!Platform.isWindows ? 0 : 50),
                         width: double.infinity,
-                        body: const Padding(
-                          padding: EdgeInsets.only(top: kDefaultPadding / 2),
-                          child: SeedChart(),
+                        body: Padding(
+                          padding:
+                              const EdgeInsets.only(top: kDefaultPadding / 2),
+                          child: !systemSimulationMode
+                              ? const SeedChart()
+                              : const SeedChartDemo(),
                         ),
                       ),
                       // const SizedBox(height: kDefaultPadding / 4),

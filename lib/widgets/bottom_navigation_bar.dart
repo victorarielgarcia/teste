@@ -305,6 +305,7 @@ class BottomNavigationItem extends StatelessWidget {
         child: InkWell(
           onTap: () {
             soundManager.playSound('click');
+
             if (ModalRoute.of(context)?.settings.name != route) {
               onExit();
               Navigator.of(context).pushNamedAndRemoveUntil(

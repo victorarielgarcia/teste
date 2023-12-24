@@ -1,6 +1,7 @@
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+
 import '../models/antenna_model.dart';
 import '../models/bluetooth_model.dart';
 import '../models/calibration_model.dart';
@@ -14,12 +15,15 @@ import '../models/seed_drop_model.dart';
 import '../models/seed_model.dart';
 import '../services/sound_manager.dart';
 
-String softwareVersion = '1.0.5';
+String softwareVersion = '2.0.0';
+// 2.0.0 Migração Bluetooth Low Energy
 // 1.0.5 Função de configurar quantos motores cada módulo roda
 // 1.0.4 Remoção aviso sonoro sensor de semente e tempo para mostrar erro de RPM
 // 1.0.3 Suporte remoto
 // 1.0.2 Enviando dados na inicialização
 // 1.0.1 Enviando rotação dos motores quando requisitado
+
+String url = 'backjm.dyzon.com.br';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -28,29 +32,25 @@ int binaryStringToInt(String binaryString) =>
     int.parse(_pattern.firstMatch(binaryString)!.group(1)!, radix: 2);
 
 SoundManager soundManager = SoundManager();
-
-BluetoothDevice device = const BluetoothDevice(address: '00:00:00:00:00:00');
-List<BluetoothDevice> devices = [];
-
-BluetoothManager bluetoothManager = BluetoothManager();
 MotorAddressingManager motorAddressingManager = MotorAddressingManager();
 
+// Bluetooth
+BluetoothManager bluetoothManager = BluetoothManager();
 bool sendManutenceMessage = false;
-bool sendWithQueue = false;
-bool checkConnection = false;
-
-Map<String, dynamic> bluetooth = {
-  'address': '00:00:00:00:00:00',
+bool systemSimulationMode = false;
+List<DiscoveredDevice> devices = [];
+Map<String, dynamic> bluetoothLE = {
+  'mainId': '',
 };
 
 Map<String, dynamic> machine = {
   'numberOfLines': 36,
   'spacing': 45,
-  'fertilizer': false,
-  'brachiaria': false,
+  'fertilizer': true,
+  'brachiaria': true,
   'stoppedMotors': false,
   'diskFilling': false,
-  'sectionsLayout': <int>[],
+  'sectionsLayout': <int>[12, 12, 12],
   'sectionIndex': 0,
 };
 
@@ -284,66 +284,66 @@ Map<String, dynamic> seed = {
     0.0,
   ],
   'setMotors': <int>[
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
   ],
   'setSensors': <int>[
     1,
@@ -601,7 +601,7 @@ Map<String, dynamic> calibration = {
   'RPMToCalibrate': 20,
   'numberOfLaps': 20,
   'calibrationResult': 0.0,
-  'collectedWeight': 0,
+  ' ': 0,
   'numberOfLinesCollected': 1,
 };
 
@@ -612,7 +612,7 @@ Map<String, dynamic> fertilizer = {
   'firstErrorLimit': 5,
   'secondErrorLimit': 10,
   'errorCompensation': 0,
-  'layout': <int>[],
+  'layout': <int>[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
   'setMotors': <int>[
     0,
     0,
@@ -750,7 +750,7 @@ Map<String, dynamic> brachiaria = {
   'firstErrorLimit': 0,
   'secondErrorLimit': 0,
   'errorCompensation': 0,
-  'layout': <int>[],
+  'layout': <int>[4, 4, 4, 4, 4, 4, 4, 4, 4],
   'setMotors': <int>[
     0,
     0,

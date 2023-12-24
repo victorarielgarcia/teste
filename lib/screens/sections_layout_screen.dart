@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../services/bluetooth.dart';
 import '../utilities/constants/colors.dart';
@@ -23,7 +22,7 @@ class SectionsLayoutScreen extends StatefulWidget {
 
 class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
   bool disableNavigation = false;
- 
+
   void checkLayout() {
     int total = 0;
     for (int section in machine['sectionsLayout']) {
@@ -145,17 +144,27 @@ class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
                                         ? InkWell(
                                             onTap: () {
                                               soundManager.playSound('click');
-                                              if (fertilizer['layout'].length >
-                                                  machine["sectionIndex"]) {
+                                              if (machine['fertilizer']) {
+                                                if (fertilizer['layout']
+                                                        .length >
+                                                    machine["sectionIndex"]) {
+                                                  setState(() {
+                                                    machine["sectionsLayout"]
+                                                        .add(fertilizer[
+                                                                'layout'][
+                                                            machine[
+                                                                "sectionIndex"]]);
+                                                  });
+                                                  machine["sectionIndex"]++;
+                                                }
+                                              } else {
                                                 setState(() {
-                                                  machine["sectionsLayout"].add(
-                                                      fertilizer['layout'][
-                                                          machine[
-                                                              "sectionIndex"]]);
+                                                  machine["sectionsLayout"]
+                                                      .add(1);
                                                 });
                                                 machine["sectionIndex"]++;
                                               }
-                                             
+
                                               checkLayout();
                                             },
                                             child: Container(
@@ -206,7 +215,7 @@ class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
                                               children: [
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       vertical:
                                                           kDefaultPadding / 2),
                                                   child: Stack(
@@ -244,7 +253,7 @@ class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
                                                                 children: [
                                                                   Padding(
                                                                     padding: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right: kDefaultPadding /
                                                                             2),
                                                                     child:
@@ -260,17 +269,23 @@ class _SectionsLayoutScreenState extends State<SectionsLayoutScreen> {
                                                                           onTap:
                                                                               () {
                                                                             soundManager.playSound('click');
-                                                                            while (true) {
-                                                                              machine["sectionIndex"]--;
-                                                                              setState(() {
-                                                                                machine["sectionsLayout"][index] -= fertilizer['layout'][machine["sectionIndex"]];
-                                                                              });
-                                                                              if (machine["sectionsLayout"][index] == 0) {
+                                                                            if (machine['fertilizer']) {
+                                                                              while (true) {
+                                                                                machine["sectionIndex"]--;
                                                                                 setState(() {
-                                                                                  machine["sectionsLayout"].removeLast();
+                                                                                  machine["sectionsLayout"][index] -= fertilizer['layout'][machine["sectionIndex"]];
                                                                                 });
-                                                                                break;
+                                                                                if (machine["sectionsLayout"][index] == 0) {
+                                                                                  setState(() {
+                                                                                    machine["sectionsLayout"].removeLast();
+                                                                                  });
+                                                                                  break;
+                                                                                }
                                                                               }
+                                                                            } else {
+                                                                              setState(() {
+                                                                                machine["sectionsLayout"].removeLast();
+                                                                              });
                                                                             }
                                                                             checkLayout();
                                                                           },

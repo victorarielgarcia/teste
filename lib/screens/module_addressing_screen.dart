@@ -33,6 +33,7 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
   int lastState = -1;
   int moduleID = 0;
   int timerCount = 0;
+  List<String> moduleVersion = ['', '', '', '', ''];
 
   bool checkMaxNumberOfLines(List<int> section) {
     int count = 0;
@@ -71,8 +72,12 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
 
   void moduleVersionListener() {
     if (mounted) {
+      for (int i = 0; i < moduleVerionState.version.length; i++) {
+        moduleVersion[i] =
+            "${moduleVerionState.version[i].toString().padLeft(4, '0').substring(0, 1)}.${moduleVerionState.version[i].toString().padLeft(4, '0').substring(1, 2)}.${moduleVerionState.version[i].toString().padLeft(4, '0').substring(2, 4)}";
+      }
       setState(() {
-        moduleVerionState.version;
+        moduleVersion;
       });
     }
   }
@@ -128,7 +133,32 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
     seed['addressedLayout'] =
         reallocate(seed['addressedLayoutDefault'], configuration, 12);
 
-    print("RESULTADO: ${seed['addressedLayout']}");
+    int totalSeed = 0;
+    int totalFertilizer = 0;
+    int totalBrachiaria = 0;
+    for (int i = 0; i < module['layout'].length; i++) {
+      totalBrachiaria += module['layout'][i][0] as int;
+      totalFertilizer += module['layout'][i][1] as int;
+      totalSeed += module['layout'][i][2] as int;
+    }
+    setState(() {
+      disableNavigation = false;
+    });
+    if (totalSeed != machine['numberOfLines']) {
+      setState(() {
+        disableNavigation = true;
+      });
+    }
+    if (totalFertilizer != fertilizer['layout'].length) {
+      setState(() {
+        disableNavigation = true;
+      });
+    }
+    if (totalBrachiaria != brachiaria['layout'].length) {
+      setState(() {
+        disableNavigation = true;
+      });
+    }
     // Deveria printar [4, 5, 25, 26, 27, 46, 47]
   }
 
@@ -240,48 +270,39 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                           child: (module["layout"].length) == index
                               ? InkWell(
                                   onTap: () {
-                                    if (module["addressed"].length <= 4) {
-                                      setState(() {
-                                        module["layout"].add([0, 0, 0]);
-                                        module["addressed"].add(0);
-                                      });
-                                    }
+                                    setState(() {
+                                      module["layout"].add([0, 0, 0]);
+                                      module["addressed"].add(0);
+                                    });
                                   },
-                                  child: module["addressed"].length <= 4
-                                      ? Container(
-                                          height: 145,
-                                          width: 200,
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  Colors.white.withOpacity(0.4),
-                                              border: Border.all(
-                                                  color: kStrokeColor,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      kDefaultBorderSize)),
-                                          child: const Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Adicionar",
-                                                style: TextStyle(
+                                  child: Container(
+                                      height: 145,
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.4),
+                                          border: Border.all(
+                                              color: kStrokeColor, width: 1),
+                                          borderRadius: BorderRadius.circular(
+                                              kDefaultBorderSize)),
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Adicionar",
+                                            style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          SizedBox(height: kDefaultPadding / 4),
+                                          Text("+",
+                                              style: TextStyle(
                                                   color: kPrimaryColor,
-                                                  fontWeight: FontWeight.w300,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  height: kDefaultPadding / 4),
-                                              Text("+",
-                                                  style: TextStyle(
-                                                      color: kPrimaryColor,
-                                                      fontSize: 28)),
-                                            ],
-                                          ))
-                                      : const SizedBox(),
-                                )
+                                                  fontSize: 28)),
+                                        ],
+                                      )))
                               : JMCard(
                                   height: 578,
                                   width: 200,
@@ -392,12 +413,10 @@ class _ModuleAddressingScreenState extends State<ModuleAddressingScreen> {
                                           const SizedBox(
                                               height: kDefaultPadding / 8),
                                           !(module['addressed'][index] == 1) ||
-                                                  moduleVerionState
-                                                          .version[index] ==
-                                                      0
+                                                  moduleVersion[index] == ''
                                               ? const SizedBox()
                                               : Text(
-                                                  'Versão: ${'${moduleVerionState.version[index].toString().padLeft(4, '0').substring(0, 1)}.${moduleVerionState.version[index].toString().padLeft(4, '0').substring(1, 2)}.${moduleVerionState.version[index].toString().padLeft(4, '0').substring(2, 4)}'}',
+                                                  'Versão: ${moduleVersion[index]}',
                                                   style: const TextStyle(
                                                       color: kPrimaryColor,
                                                       fontWeight:

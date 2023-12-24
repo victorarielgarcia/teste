@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:battery_plus/battery_plus.dart';
+import 'package:easytech_electric_blue/services/bluetooth.dart';
+import 'package:easytech_electric_blue/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -26,12 +29,17 @@ class TopBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                  padding: const EdgeInsets.only(top: kDefaultPadding),
-                  child: SizedBox(
-                      height: 45,
-                      width: 185,
-                      child: Image.asset('assets/images/logo_jumil.png'))),
+              GestureDetector(
+                onTap: () async {
+                  await Bluetooth().startScan();
+                },
+                child: Padding(
+                    padding: const EdgeInsets.only(top: kDefaultPadding),
+                    child: SizedBox(
+                        height: 45,
+                        width: 185,
+                        child: Image.asset('assets/images/logo_jumil.png'))),
+              ),
               const TopTab(),
               const TopIcons(),
             ],
@@ -122,39 +130,40 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
     StorageManager().save();
     getDate();
     getBatteryInfo();
+    if (!Platform.isWindows) {
+      accelerometerSubscription =
+          accelerometerEvents.listen((AccelerometerEvent event) {
+        if (seedDropControl['enabled'] &&
+            antenna['speed'] < 1 &&
+            !seedDropControl["isControlling"]) {
+          // Get the value of acceleration in the desired axis, in this case, x
+          double currentValue = event.z;
+          // print("ACELEROMETRO: $event");
 
-    accelerometerSubscription =
-        accelerometerEvents.listen((AccelerometerEvent event) {
-      if (seedDropControl['enabled'] &&
-          antenna['speed'] < 1 &&
-          !seedDropControl["isControlling"]) {
-        // Get the value of acceleration in the desired axis, in this case, x
-        double currentValue = event.z;
-        // print("ACELEROMETRO: $event");
+          // If the last value is available, compare it with the current value
+          if (seedDropControl['lastValue'] != null) {
+            double difference = currentValue - seedDropControl['lastValue'];
 
-        // If the last value is available, compare it with the current value
-        if (seedDropControl['lastValue'] != null) {
-          double difference = currentValue - seedDropControl['lastValue'];
-
-          // If the difference is greater than the threshold, consider it as movement
-          if (difference.abs() > seedDropControl['calibration']) {
-            // print('Movement detected!');
-            seedDropManager.update(1);
-            seedDropControl["isControlling"] = true;
-            Messages().message["fillDisk"]!(1);
-            machine['diskFilling'] = true;
-            Timer(const Duration(seconds: 5), () {
+            // If the difference is greater than the threshold, consider it as movement
+            if (difference.abs() > seedDropControl['calibration']) {
+              // print('Movement detected!');
+              seedDropManager.update(1);
+              seedDropControl["isControlling"] = true;
+              Messages().message["fillDisk"]!(1);
+              machine['diskFilling'] = true;
+              Timer(const Duration(seconds: 5), () {
+                seedDropControl["isControlling"] = false;
+                machine['diskFilling'] = false;
+                Messages().message["fillDisk"]!(0);
+                seedDropManager.update(0);
+              });
+            } else {
               seedDropControl["isControlling"] = false;
-              machine['diskFilling'] = false;
-              Messages().message["fillDisk"]!(0);
-              seedDropManager.update(0);
-            });
-          } else {
-            seedDropControl["isControlling"] = false;
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     timer ??= Timer.periodic(const Duration(seconds: 3), (timer) async {
       getDate();
@@ -184,100 +193,128 @@ class _TopTabState extends State<TopTab> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-      child: Container(
-        width: 800,
-        height: 70,
-        decoration: BoxDecoration(
-            color: kSecondaryColor,
-            border: Border.all(color: kStrokeColor),
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(kDefaultBorderSize),
-                bottomRight: Radius.circular(kDefaultBorderSize))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          child: Container(
+            width: 800,
+            height: 70,
+            decoration: BoxDecoration(
+                color: kSecondaryColor,
+                border: Border.all(color: kStrokeColor),
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(kDefaultBorderSize),
+                    bottomRight: Radius.circular(kDefaultBorderSize))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(
-                  width: kDefaultPadding,
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: kDefaultPadding,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: kPrimaryColor),
+                        ),
+                        Text(
+                          "${day.toString().padLeft(2, '0')}/${month.toString().padLeft(2, '0')}/$year",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: kPrimaryColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      width: kDefaultPadding * 1.5,
+                    ),
+                    // SizedBox(
+                    //   height: 35,
+                    //   child: SvgPicture.asset(
+                    //     'assets/icons/alert.svg',
+                    //   ),
+                    // ),
+                  ],
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
                   children: [
                     Text(
-                      "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}",
+                      "${battery["level"]}%",
                       style: const TextStyle(
                           fontWeight: FontWeight.w500, color: kPrimaryColor),
                     ),
-                    Text(
-                      "${day.toString().padLeft(2, '0')}/${month.toString().padLeft(2, '0')}/$year",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w500, color: kPrimaryColor),
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 14, top: 5),
+                          child: Container(
+                            width: 24 * battery["level"] / 100,
+                            height: 12,
+                            decoration: BoxDecoration(
+                                color: kPrimaryColor,
+                                borderRadius: BorderRadius.circular(
+                                    kDefaultBorderSize / 5)),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 22,
+                          child: SvgPicture.asset(
+                            'assets/icons/battery.svg',
+                          ),
+                        ),
+                        battery["state"] == BatteryState.charging
+                            ? Positioned(
+                                left: -2,
+                                right: 0,
+                                top: 4.5,
+                                child: SizedBox(
+                                  height: 13,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/bolt.svg',
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                      ],
+                    ),
+                    const SizedBox(
+                      width: kDefaultPadding,
                     ),
                   ],
                 ),
-                const SizedBox(
-                  width: kDefaultPadding * 1.5,
-                ),
-                // SizedBox(
-                //   height: 35,
-                //   child: SvgPicture.asset(
-                //     'assets/icons/alert.svg',
-                //   ),
-                // ),
               ],
             ),
-            Row(
-              children: [
-                Text(
-                  "${battery["level"]}%",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w500, color: kPrimaryColor),
-                ),
-                Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 14, top: 5),
-                      child: Container(
-                        width: 24 * battery["level"] / 100,
-                        height: 12,
-                        decoration: BoxDecoration(
-                            color: kPrimaryColor,
-                            borderRadius:
-                                BorderRadius.circular(kDefaultBorderSize / 5)),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 22,
-                      child: SvgPicture.asset(
-                        'assets/icons/battery.svg',
-                      ),
-                    ),
-                    battery["state"] == BatteryState.charging
-                        ? Positioned(
-                            left: -2,
-                            right: 0,
-                            top: 4.5,
-                            child: SizedBox(
-                              height: 13,
-                              child: SvgPicture.asset(
-                                'assets/icons/bolt.svg',
-                              ),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ],
-                ),
-                const SizedBox(
-                  width: kDefaultPadding,
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
+        !Platform.isWindows
+            ? const SizedBox()
+            : SizedBox(
+                width: 800,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                    width: 200,
+                    height: 50,
+                    child: JMButton(
+                        text: "Fechar simulação",
+                        backgroundColor: kErrorColor,
+                        foregroundColor: kSecondaryColor,
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          exit(0);
+                        }),
+                  ),
+                ),
+              ),
+      ],
     );
   }
 }

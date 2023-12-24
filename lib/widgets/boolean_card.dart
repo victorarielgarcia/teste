@@ -76,8 +76,7 @@ class _BooleanCardState extends State<BooleanCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  0, kDefaultPadding / 2, 0, kDefaultPadding / 4),
+              padding: const EdgeInsets.fromLTRB(0, kDefaultPadding / 2, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -93,77 +92,83 @@ class _BooleanCardState extends State<BooleanCard> {
                         fontSize: 18),
                   ),
                   const SizedBox(height: kDefaultPadding),
-                  Padding(
-                    padding: const EdgeInsets.only(left: kDefaultPadding / 2),
-                    child: Transform.scale(
-                      scale: 2.0,
-                      child: Switch(
-                        value: variable,
-                        activeColor: kSuccessColor,
-                        onChanged: (bool value) {
-                          soundManager.playSound('click');
-                          variable = !variable;
-                          switch (widget.id) {
-                            case 1:
-                              setState(() {
-                                machine['fertilizer'] = variable;
-                              });
-                              Messages().message["fertilizer"]!();
-                              Future.delayed(
-                                const Duration(milliseconds: 400),
-                                () {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      MachineScreen.route, (route) => false);
-                                },
-                              );
-                              break;
-                            case 2:
-                              setState(() {
-                                machine['brachiaria'] = variable;
-                              });
-                              Messages().message["brachiaria"]!();
-                              Future.delayed(
-                                const Duration(milliseconds: 400),
-                                () {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      MachineScreen.route, (route) => false);
-                                },
-                              );
-                              break;
-                            case 3:
-                              setState(() {
-                                liftSensor['normallyOpen'] = variable;
-                              });
-                              liftSensor['manualMachineLifted'] = false;
-                              Messages().message["sensor"]!(
-                                  LiftSensor().getSelectableOption());
+                  Transform.scale(
+                    scale: 1.5,
+                    child: Switch(
+                      value: variable,
+                      activeColor: kSuccessColor,
+                      inactiveThumbColor: kPrimaryColor,
+                      inactiveTrackColor: kSecondaryColor,
+                      trackOutlineColor: MaterialStateProperty.resolveWith(
+                          (final Set<MaterialState> states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return null;
+                        }
+                        return kDisabledColor;
+                      }),
+                      onChanged: (bool value) {
+                        soundManager.playSound('click');
+                        variable = !variable;
+                        switch (widget.id) {
+                          case 1:
+                            setState(() {
+                              machine['fertilizer'] = variable;
+                            });
+                            Messages().message["fertilizer"]!();
+                            Future.delayed(
+                              const Duration(milliseconds: 400),
+                              () {
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    MachineScreen.route, (route) => false);
+                              },
+                            );
+                            break;
+                          case 2:
+                            setState(() {
+                              machine['brachiaria'] = variable;
+                            });
+                            Messages().message["brachiaria"]!();
+                            Future.delayed(
+                              const Duration(milliseconds: 400),
+                              () {
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    MachineScreen.route, (route) => false);
+                              },
+                            );
+                            break;
+                          case 3:
+                            setState(() {
+                              liftSensor['normallyOpen'] = variable;
+                            });
+                            liftSensor['manualMachineLifted'] = false;
+                            Messages().message["sensor"]!(
+                                LiftSensor().getSelectableOption());
 
-                              break;
-                            case 4:
-                              setState(() {
-                                liftSensor['manualMachineLifted'] = variable;
-                                liftSensor['machineLifted'] = variable;
-                              });
-                              liftSensor['normallyOpen'] = false;
-                              liftSensorManager
-                                  .update(!liftSensor['machineLifted']);
-                              Messages().message["sensor"]!(
-                                  LiftSensor().getSelectableOption());
-                              break;
-                            case 5:
-                              setState(() {
-                                seedDropControl['enabled'] = variable;
-                              });
-                              seedDropManager.update(variable ? 0 : -1);
-                              break;
-                            case 6:
-                              setState(() {
-                                log['enabled'] = variable;
-                              });
-                              break;
-                          }
-                        },
-                      ),
+                            break;
+                          case 4:
+                            setState(() {
+                              liftSensor['manualMachineLifted'] = variable;
+                              liftSensor['machineLifted'] = variable;
+                            });
+                            liftSensor['normallyOpen'] = false;
+                            liftSensorManager
+                                .update(!liftSensor['machineLifted']);
+                            Messages().message["sensor"]!(
+                                LiftSensor().getSelectableOption());
+                            break;
+                          case 5:
+                            setState(() {
+                              seedDropControl['enabled'] = variable;
+                            });
+                            seedDropManager.update(variable ? 0 : -1);
+                            break;
+                          case 6:
+                            setState(() {
+                              log['enabled'] = variable;
+                            });
+                            break;
+                        }
+                      },
                     ),
                   )
                 ],

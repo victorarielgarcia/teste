@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:soundpool/soundpool.dart';
 
@@ -27,10 +29,12 @@ class SoundManager {
 
   // Este método toca um som
   Future<void> playSound(String soundName) async {
-    if (soundIds.containsKey(soundName)) {
-      soundPool.play(soundIds[soundName]!);
-    } else {
-      AppLogger.log('Sound not found: $soundName');
+    if (!Platform.isWindows) {
+      if (soundIds.containsKey(soundName)) {
+        soundPool.play(soundIds[soundName]!);
+      } else {
+        AppLogger.log('Sound not found: $soundName');
+      }
     }
   }
 }

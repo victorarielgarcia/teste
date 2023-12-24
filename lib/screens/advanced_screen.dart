@@ -1,4 +1,5 @@
-import 'package:android_intent_plus/android_intent.dart';
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:easytech_electric_blue/screens/module_addressing_screen.dart';
 import 'package:easytech_electric_blue/screens/motor_addressing_screen.dart';
 import 'package:easytech_electric_blue/utilities/constants/sizes.dart';
@@ -6,6 +7,7 @@ import 'package:easytech_electric_blue/widgets/boolean_card.dart';
 import 'package:easytech_electric_blue/widgets/config_card.dart';
 import 'package:easytech_electric_blue/widgets/toogle_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_svg/svg.dart';
 import '../services/bluetooth.dart';
 import '../services/logger.dart';
@@ -26,6 +28,11 @@ class AdvancedScreen extends StatefulWidget {
 }
 
 class _AdvancedScreenState extends State<AdvancedScreen> {
+  Timer? timer;
+  List<DropdownMenuItem<DiscoveredDevice>>? dropdownItems;
+  DiscoveredDevice? device;
+  DiscoveredDevice? selectedDevice;
+  bool changedSelection = false;
   final seedDropState = seedDropManager.state;
   void seedDropListener() {
     if (mounted) {
@@ -41,17 +48,63 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
       Bluetooth().currentScreen(context, 20);
     }
     seedDropManager.addListener(seedDropListener);
+
     _init();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   advancedDialog(context);
-    // });
     super.initState();
   }
 
   @override
   void dispose() {
     seedDropManager.removeListener(seedDropListener);
+    timer!.cancel();
     super.dispose();
+  }
+
+  SvgPicture getRssiIcon(int rssi) {
+    if (rssi > -75) {
+      return SvgPicture.asset('assets/icons/signal_3.svg'); // Alto
+    } else if (rssi > -85 && rssi <= -75) {
+      return SvgPicture.asset('assets/icons/signal_2.svg'); // Médio
+    } else if (rssi >= -90 && rssi <= -85) {
+      return SvgPicture.asset('assets/icons/signal_1.svg'); // Fraco
+    } else {
+      return SvgPicture.asset('assets/icons/signal_0.svg'); // Muito Fraco
+    }
+  }
+
+  _getDevices() {
+    setState(() {
+      dropdownItems = devices.map((device) {
+        return DropdownMenuItem<DiscoveredDevice>(
+          value: device,
+          child: Row(
+            children: [
+              Text("${device.name} : "),
+              getRssiIcon(device.rssi),
+              Text(
+                " ${device.rssi}dBm",
+                style: const TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+        );
+      }).toList();
+    });
+    // Se selectedDevice não estiver na lista, ajuste-o
+
+    if ((selectedDevice == null || !devices.contains(selectedDevice)) &&
+        changedSelection) {
+      selectedDevice = selectedDevice = devices.firstWhere(
+        (element) => element.id == selectedDevice!.id,
+        orElse: () => DiscoveredDevice(
+            id: bluetoothLE['mainId'],
+            name: bluetoothLE['mainId'],
+            serviceData: const {},
+            manufacturerData: Uint8List(0),
+            rssi: 0,
+            serviceUuids: const []),
+      );
+    }
   }
 
   bool isLoadingDevices = false;
@@ -59,7 +112,19 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
     setState(() {
       isLoadingDevices = true;
     });
-    await Bluetooth().getPairedDevices();
+
+    if (bluetoothLE["mainId"] != null && bluetoothLE["mainId"].isNotEmpty) {
+      for (DiscoveredDevice device in devices) {
+        if (device.id == bluetoothLE["mainId"]) {
+          selectedDevice = device;
+          break;
+        }
+      }
+    }
+    _getDevices();
+    timer ??= Timer.periodic(const Duration(seconds: 1), (timer) async {
+      _getDevices();
+    });
     setState(() {
       isLoadingDevices = false;
     });
@@ -106,7 +171,7 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
               ),
               const SizedBox(height: kDefaultPadding),
               const Text(
-                "Bluetooth",
+                "Rede sem fio",
                 style: TextStyle(
                     fontSize: 22,
                     color: kPrimaryColor,
@@ -121,30 +186,34 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         DropdownButton(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          items: Bluetooth().getDeviceItems(),
-                          onChanged: (value) => setState(() => device = value!),
-                          value: device,
-                        ),
-                        const SizedBox(width: kDefaultPadding),
-                        JMButton(
-                          text: "Conectar",
-                          onPressed: () async {
-                            connected = false;
-                        
-                            bluetooth['address'] = device.address;
+                          value: selectedDevice,
+                          items: dropdownItems,
+                          onChanged: (newValue) {
+                            _getDevices();
+                            setState(() {
+                              changedSelection = true;
+                              selectedDevice = devices.firstWhere(
+                                  (element) => element.id == newValue!.id);
+                            });
                           },
                         ),
                         const SizedBox(width: kDefaultPadding),
                         JMButton(
-                            text: '',
-                            icon: const Icon(Icons.bluetooth),
-                            onPressed: () {
-                              const AndroidIntent(
-                                action: 'android.settings.BLUETOOTH_SETTINGS',
-                              ).launch();
-                            }),
+                          text: "Alterar",
+                          onPressed: () async {
+                            bluetoothLE['mainId'] = selectedDevice!.id;
+                            Bluetooth().disconnect();
+                          },
+                        ),
+                        const SizedBox(width: kDefaultPadding),
+                        // JMButton(
+                        //     text: '',
+                        //     icon: const Icon(Icons.bluetooth),
+                        //     onPressed: () {
+                        //       const AndroidIntent(
+                        //         action: 'android.settings.BLUETOOTH_SETTINGS',
+                        //       ).launch();
+                        //     }),
                       ],
                     ),
               const SizedBox(height: kDefaultPadding),

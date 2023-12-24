@@ -50,6 +50,9 @@ class JMAlertBox {
                               Radius.circular(kDefaultBorderSize))),
                       contentPadding: const EdgeInsets.only(top: 10.0),
                       insetPadding: EdgeInsets.only(bottom: insetPadding),
+                      backgroundColor: kBackgroundColor,
+                      surfaceTintColor: kBackgroundColor,
+                    
                       content: SizedBox(
                         width: width,
                         child: Column(
